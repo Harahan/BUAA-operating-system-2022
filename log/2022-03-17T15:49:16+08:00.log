@@ -1,0 +1,72 @@
+[33m[01m[05m[ You are changing the branch: lab0-Extra ][0m
+Autotest: Begin at Thu Mar 17 15:49:16 CST 2022
+/usr/src/workdir/input_testcase1.c: In function 'main':
+/usr/src/workdir/input_testcase1.c:4:12: error: expected expression before ')' token
+    4 |         if()
+      |            ^
+[32m[ You have passed testcase 1/10. ][0m
+/usr/src/workdir/input_testcase2.c: In function 'main':
+/usr/src/workdir/input_testcase2.c:9:25: error: expected expression before '{' token
+    9 |                         {}
+      |                         ^
+/usr/src/workdir/input_testcase2.c:10:1: error: expected expression before '}' token
+   10 | }
+      | ^
+[32m[ You have passed testcase 2/10. ][0m
+/usr/src/workdir/input_testcase3.c: In function 'main':
+/usr/src/workdir/input_testcase3.c:9:17: warning: format '%d' expects argument of type 'int *', but argument 2 has type 'int' [-Wformat=]
+    9 |         scanf("%d",z);
+      |                ~^  ~
+      |                 |  |
+      |                 |  int
+      |                 int *
+/usr/src/workdir/input_testcase3.c:10:23: error: expected ')' before ';' token
+   10 |         printf("%d",&x;
+      |                       ^
+      |                       )
+/usr/src/workdir/input_testcase3.c:10:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'int *' [-Wformat=]
+   10 |         printf("%d",&x;
+      |                 ~^  ~~
+      |                  |  |
+      |                  |  int *
+      |                  int
+      |                 %ls
+/usr/src/workdir/input_testcase3.c:10:24: error: expected ';' before '}' token
+   10 |         printf("%d",&x;
+      |                        ^
+      |                        ;
+   11 | }
+      | ~                       
+[32m[ You have passed testcase 3/10. ][0m
+/usr/src/workdir/input_testcase4.c: In function 'main':
+/usr/src/workdir/input_testcase4.c:5:21: error: 'b' undeclared (first use in this function)
+    5 |         printf("%d",b);
+      |                     ^
+/usr/src/workdir/input_testcase4.c:5:21: note: each undeclared identifier is reported only once for each function it appears in
+/usr/src/workdir/input_testcase4.c:7:21: warning: format '%d' expects a matching 'int' argument [-Wformat=]
+    7 |         printf("%d %d %d",a);
+      |                    ~^
+      |                     |
+      |                     int
+/usr/src/workdir/input_testcase4.c:7:24: warning: format '%d' expects a matching 'int' argument [-Wformat=]
+    7 |         printf("%d %d %d",a);
+      |                       ~^
+      |                        |
+      |                        int
+[32m[ You have passed testcase 4/10. ][0m
+[32m[ You have passed testcase 5/10. ][0m
+Files /home/git/ostest/target/20376156/lab0-Extra-2022-03-17T15:49:16+08:00-WdOJ5/result.txt and /home/git/ostest/target/20376156/lab0-Extra-2022-03-17T15:49:16+08:00-WdOJ5/result_ans.txt differ
+[31m[01m[ You have not passed testcase 6/10. ][0m
+[32m[ You have passed testcase 7/10. ][0m
+[32m[ You have passed testcase 8/10. ][0m
+/usr/src/workdir/input_testcase9.c: In function 'main':
+/usr/src/workdir/input_testcase9.c:6:25: warning: format '%d' expects a matching 'int *' argument [-Wformat=]
+    6 |                 scanf("%d");
+      |                        ~^
+      |                         |
+      |                         int *
+Files /home/git/ostest/target/20376156/lab0-Extra-2022-03-17T15:49:16+08:00-WdOJ5/result.txt and /home/git/ostest/target/20376156/lab0-Extra-2022-03-17T15:49:16+08:00-WdOJ5/result_ans.txt differ
+[31m[01m[ You have not passed testcase 9/10. ][0m
+[32m[ You have passed testcase 10/10. ][0m
+[33m[01m[ You got 80 (of 100) this time. Thu Mar 17 16:01:26 CST 2022 ][0m
+Autotest: End at Thu Mar 17 16:01:26 CST 2022

@@ -1,4 +1,0 @@
-oo.c: In function 'main':
-oo.c:3:14: warning: unused variable 'b' [-Wunused-variable]
-    3 |   int a = 0, b;
-      |              ^
