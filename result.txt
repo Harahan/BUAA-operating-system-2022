@@ -1,3 +1,5 @@
+oo.c:3:14: unused variable 'b' [-Wunused-variable]
 2
 3
 4
+/home/git/20376156

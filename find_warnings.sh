@@ -1,6 +1,7 @@
 #!/bin/bash
 gcc -Wall $1 -o test 2> warning.txt
-sed  's/warning: //g' warning.txt > result.txt
+grep warning:  warning.txt > result.txt
+sed  -i 's/warning: //g' result.txt
 gcc $1 -o test
 if [ $? -eq 0 ]
 then
