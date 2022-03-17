@@ -2,4 +2,11 @@ oo.c:3:14: unused variable 'b' [-Wunused-variable]
 2
 3
 4
+5
+6
+7
+8
+9
+10
+11
 /home/git/20376156
