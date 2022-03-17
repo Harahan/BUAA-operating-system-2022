@@ -1,7 +1,10 @@
 #include<stdio.h>
-int main(){
-		int a = 0, b;
-		scanf("%d", &a);
-		printf("%d", a + 1);
-		return 0;
+int main()
+{
+int a,b;
+if(2<3<4)
+{
+scanf("%d",&a);
+printf("%d\n",a+a);
 }
+return 0;}
