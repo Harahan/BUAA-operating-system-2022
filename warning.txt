@@ -1,7 +1,7 @@
-/home/git/20376156/oo.c: In function 'main':
-/home/git/20376156/oo.c:5:7: warning: comparisons like 'X<=Y<=Z' do not have their mathematical meaning [-Wparentheses]
+oo.c: In function 'main':
+oo.c:5:7: warning: comparisons like 'X<=Y<=Z' do not have their mathematical meaning [-Wparentheses]
     5 | if(2<3<4)
       |       ^
-/home/git/20376156/oo.c:4:7: warning: unused variable 'b' [-Wunused-variable]
+oo.c:4:7: warning: unused variable 'b' [-Wunused-variable]
     4 | int a,b;
       |       ^
