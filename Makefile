@@ -45,3 +45,7 @@ clean:
 	rm -rf *.o *~ $(vmlinux_elf)
 
 include include.mk
+
+# run kernal
+run:
+	/OSLAB/gxemul -E testmips -C R3000 -M 64 $(vmlinux_elf)

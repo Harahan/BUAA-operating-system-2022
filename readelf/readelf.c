@@ -63,11 +63,18 @@ int readelf(u_char *binary, int size)
         }
 
         // get section table addr, section header number and section header size.
-
+		sh_entry_count = ehdr->e_shnum;
+		sh_entry_size = ehdr->e_shentsize;
+		ptr_sh_table = binary + ehdr->e_shoff;
+		// tips: e_shoff is the offest between the ELF file and section table.
+		
         // for each section header, output section number and section addr. 
+		for (Nr = 0; Nr < sh_entry_count; Nr++) {
+			shdr = (Elf32_Shdr*)(ptr_sh_table + Nr * sh_entry_size);
+			printf("%d:0x%x\n", Nr, shdr->sh_addr);
+		}
         // hint: section number starts at 0.
-
-
+		
         return 0;
 }
 

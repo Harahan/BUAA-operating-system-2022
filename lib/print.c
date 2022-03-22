@@ -49,12 +49,12 @@ lp_Print(void (*output)(void *, char *, int),
 
 	
 
-    int longFlag;
-    int negFlag;
-    int width;
-    int prec;
-    int ladjust;
-    char padc;
+    int longFlag; // long
+    int negFlag; // + or -
+    int width; 
+    int prec; // decimal precision
+    int ladjust; // left adjust
+    char padc; // fill the unnecessary position
 
     int length;
 
@@ -65,23 +65,60 @@ lp_Print(void (*output)(void *, char *, int),
     for(;;) {
 
         /* Part1: your code here */
-
+/******************************************************************************************************/
 	{ 
 	    /* scan for the next '%' */
+		char  *cur_fmt = fmt;
+		while(1){
+			if ((*cur_fmt) == '\0' || (*cur_fmt) == '%') break;
+			cur_fmt++;
+		}
 	    /* flush the string found so far */
-
+		OUTPUT(arg, fmt, cur_fmt - fmt);
+		fmt = cur_fmt;
 	    /* check "are we hitting the end?" */
+		if ((*fmt) == '\0') break;
 	}
-
 	
+	/*%[flags][width][.precision][length]specifier*/	
 	/* we found a '%' */
-	
-	/* check for long */
-
-	/* check for other prefixes */
-
+	fmt++;	
 	/* check format flag */
-	
+	padc = ' ';
+	ladjust = 0;
+	if ((*fmt) == '-') {
+		ladjust = 1;
+		fmt++;
+	}
+	if ((*fmt) == '0') {
+		padc = '0';
+		fmt++;
+	}
+	/* check for width */
+	width = 0;
+	while (IsDigit(*fmt)) {
+		width = width * 10 + Ctod(*fmt);
+		fmt++;
+	}
+	/* check for other prefixes */
+	//decimal precision
+	if ((*fmt) == '.') {
+		prec = 0;
+		fmt++;
+		while (IsDigit(*fmt)) {
+			prec = prec * 10 + Ctod(*fmt);
+			fmt++;
+		}
+	} else {
+		prec = 6;
+	}
+	// check for long
+	longFlag = 0;
+	if ((*fmt) == 'l') {
+		longFlag = 1;
+		fmt++;
+	}
+/*******************************************************************************************************/
 
 	negFlag = 0;
 	switch (*fmt) {
