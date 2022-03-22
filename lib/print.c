@@ -66,7 +66,7 @@ lp_Print(void (*output)(void *, char *, int),
 
         /* Part1: your code here */
 /**********************************************************************************************************/
-	{ 
+	{
 	    /* scan for the next '%' */
 		char  *cur_fmt = fmt;
 		while(1){
@@ -80,7 +80,7 @@ lp_Print(void (*output)(void *, char *, int),
 		if ((*fmt) == '\0') break;
 	}
 	
-	/*%[flags][width][.precision][length]specifier*/	
+	/**%[flags][width][.precision][length]specifier*/
 	/* we found a '%' */
 	fmt++;	
 	/* check format flag */
@@ -139,13 +139,15 @@ lp_Print(void (*output)(void *, char *, int),
 	    } else { 
 		num = va_arg(ap, int); 
 	    }
-	    
 		/*  Part2:
 			your code here.
 			Refer to other part (case 'b',case 'o' etc.) and func PrintNum to complete this part.
 			Think the difference between case 'd' and others. (hint: negFlag).
 		*/
-	    
+        /*************************************************************************************************/
+        length = PrintNum(buf, num, 10, negFlag, width, ladjust, padc, 0);
+        OUTPUT(arg, buf, length);
+        /*************************************************************************************************/
 		break;
 
 	 case 'o':
@@ -273,7 +275,7 @@ PrintNum(char * buf, unsigned long u, int base, int negFlag,
     char *p = buf;
     int i;
 
-    do {
+    do { // base -- 2, 8, 10, 16    u -- num
 	int tmp = u %base;
 	if (tmp <= 9) {
 	    *p++ = '0' + tmp;
@@ -290,7 +292,7 @@ PrintNum(char * buf, unsigned long u, int base, int negFlag,
     }
 
     /* figure out actual length and adjust the maximum length */
-    actualLength = p - buf;
+    actualLength = p - buf; //length -- width
     if (length < actualLength) length = actualLength;
 
     /* add padding */
