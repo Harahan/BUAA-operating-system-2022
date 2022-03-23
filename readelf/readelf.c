@@ -49,9 +49,9 @@ int readelf(u_char *binary, int size)
 
         int Nr;
 
-        Elf32_Shdr *shdr = NULL;
+        Elf32_Shdr *shdr = NULL; // addr for sh(Elf32_Shdr*)
 
-        u_char *ptr_sh_table = NULL;
+        u_char *ptr_sh_table = NULL; // initial addr for sh(u_char*)
         Elf32_Half sh_entry_count;
         Elf32_Half sh_entry_size;
 
