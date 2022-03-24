@@ -1,0 +1,32 @@
+[33m[01m[05m[ You are changing the branch: lab1-1-exam ][0m
+Autotest: Begin at Thu Mar 24 14:14:25 CST 2022
+[32m[ readelf.c found ][0m
+rm -rf *.o
+rm readelf
+rm: cannot remove 'readelf': No such file or directory
+make: *** [Makefile:16: clean] Error 1
+gcc -I./ -c main.c
+gcc -I./ -c readelf.c
+readelf.c: In function 'readelf':
+readelf.c:82:22: error: invalid initializer
+   82 |  Elf32_Shdr shdr1 =  (Elf32_Shdr*)(ptr_sh_table + 2 * sh_entry_size);
+      |                      ^
+readelf.c:84:22: error: invalid initializer
+   84 |  Elf32_Shdr shdr2 =  (Elf32_Shdr*)(ptr_sh_table + 3 * sh_entry_size);
+      |                      ^
+readelf.c:86:42: error: invalid type argument of '->' (have 'Elf32_Shdr' {aka 'struct <anonymous>'})
+   86 |  printf("Read : %d:0x%x,0x%x\n", 2, shdr1->sh_offset, shdr1->sh_addr);
+      |                                          ^~
+readelf.c:86:60: error: invalid type argument of '->' (have 'Elf32_Shdr' {aka 'struct <anonymous>'})
+   86 |  printf("Read : %d:0x%x,0x%x\n", 2, shdr1->sh_offset, shdr1->sh_addr);
+      |                                                            ^~
+readelf.c:88:42: error: invalid type argument of '->' (have 'Elf32_Shdr' {aka 'struct <anonymous>'})
+   88 |  printf("Read : %d:0x%x,0x%x\n", 3, shdr2->sh_offset, shdr2->sh_addr);
+      |                                          ^~
+readelf.c:88:60: error: invalid type argument of '->' (have 'Elf32_Shdr' {aka 'struct <anonymous>'})
+   88 |  printf("Read : %d:0x%x,0x%x\n", 3, shdr2->sh_offset, shdr2->sh_addr);
+      |                                                            ^~
+make: *** [Makefile:6: readelf.o] Error 1
+[31m[01m[ Cannot find your readelf. Please check your readelf.c. ][0m
+[33m[01m[ You got 10 (of 100) this time. Thu Mar 24 14:14:29 CST 2022 ][0m
+Autotest: End at Thu Mar 24 14:14:29 CST 2022
