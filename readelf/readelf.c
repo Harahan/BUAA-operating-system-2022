@@ -79,9 +79,9 @@ int readelf(u_char *binary, int size)
 		ptr_sh_table = binary + ehdr->e_shoff;
 			printf("%d:0x%x\n", Nr, shdr->sh_addr);
 		}*/
-	Elf32_Shdr shdr1 =  (Elf32_Shdr*)(ptr_sh_table + 2 * sh_entry_size);
+	Elf32_Shdr *shdr1 =  (Elf32_Shdr*)(ptr_sh_table + 2 * sh_entry_size);
 
-	Elf32_Shdr shdr2 =  (Elf32_Shdr*)(ptr_sh_table + 3 * sh_entry_size);
+	Elf32_Shdr *shdr2 =  (Elf32_Shdr*)(ptr_sh_table + 3 * sh_entry_size);
 
 	printf("Read : %d:0x%x,0x%x\n", 2, shdr1->sh_offset, shdr1->sh_addr);
 
