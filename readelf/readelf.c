@@ -86,7 +86,8 @@ int readelf(u_char *binary, int size)
 		Elf32_Word p_memsz2;
 		int p1, q1;
 		int p2, q2;
-		for (int Nr = 0; Nr < ph_entry_count - 1; Nr++){
+		 Nr = 0; 
+		for (; Nr < ph_entry_count - 1; Nr++){
 			phdr1 = (Elf32_Phdr*)(ptr_ph_table + Nr * ph_entry_size);
 			phdr2 = (Elf32_Phdr*)(ptr_ph_table + (Nr + 1) * ph_entry_size);
 			p_vaddr1 = phdr1->p_vaddr; p_vaddr2 = phdr2->p_vaddr;
