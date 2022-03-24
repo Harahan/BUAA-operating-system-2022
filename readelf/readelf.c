@@ -95,7 +95,7 @@ int readelf(u_char *binary, int size)
 			q1 = (p_vaddr1 + p_filesz1) / S; q2 = (p_vaddr2 + p_filesz2) / S;
 			if (q1 <= p2) {
    				printf("%d:0x%x,0x%x\n", Nr, phdr1->p_filesz, phdr1->p_memsz);
-			} else if (p_vaddr1 + p_filesz1 < p_vaddr2 && q1 >= p2) {
+			} else if (p_vaddr1 + p_filesz1 <= p_vaddr2 && q1 >= p2) {
 				printf("Overlay at page va : 0x%x\n", p_vaddr2);
 			} else {
 				printf("Conflict at page va : 0x%x\n", p_vaddr2);
