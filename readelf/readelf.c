@@ -91,8 +91,8 @@ int readelf(u_char *binary, int size)
 			phdr2 = (Elf32_Phdr*)(ptr_ph_table + (Nr + 1) * ph_entry_size);
 			p_vaddr1 = phdr1->p_vaddr; p_vaddr2 = phdr2->p_vaddr;
 			p_filesz1 = phdr1->p_filesz; p_filesz2 = phdr2->p_filesz;
-			p1 = p_vaddr1 / S + 1; p2 = p_vaddr2 / S + 1; 
-			q1 = (p_vaddr1 + p_filesz1) / S; q2 = (p_vaddr2 + p_filesz2) / S;
+			p1 = p_vaddr1 / S; p2 = p_vaddr2 / S; 
+			q1 = (p_vaddr1 + p_filesz1 - 1) / S; q2 = (p_vaddr2 + p_filesz2 - 1) / S;
 			if (q1 < p2) {
    				printf("%d:0x%x,0x%x\n", Nr, phdr1->p_filesz, phdr1->p_memsz);
 			} else if (p_vaddr1 + p_filesz1 < p_vaddr2 && q1 >= p2) {
