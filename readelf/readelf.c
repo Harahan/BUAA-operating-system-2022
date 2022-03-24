@@ -89,13 +89,13 @@ int readelf(u_char *binary, int size)
 		for (int Nr = 0; Nr < ph_entry_count - 1; Nr++){
 			phdr1 = (Elf32_Phdr*)(ptr_ph_table + Nr * ph_entry_size);
 			phdr2 = (Elf32_Phdr*)(ptr_ph_table + (Nr + 1) * ph_entry_size);
-			p_paddr1 = phdr1->p_paddr; p_paddr2 = phdr2->p_paddr;
-			p_memsz1 = phdr1->p_memsz; p_memsz2 = phdr2->p_memsz;
-			p1 = p_paddr1 / S + 1; p2 = p_paddr2 / S + 1; 
-			q1 = (p_paddr1 + p_memsz1) / S; q2 = (p_paddr2 + p_memsz2) / S;
+			p_vaddr1 = phdr1->p_vaddr; p_vaddr2 = phdr2->p_vaddr;
+			p_filesz1 = phdr1->p_filesz; p_filesz2 = phdr2->p_filesz;
+			p1 = p_vaddr1 / S + 1; p2 = p_vaddr2 / S + 1; 
+			q1 = (p_vaddr1 + p_filesz1) / S; q2 = (p_vaddr2 + p_filesz2) / S;
 			if (q1 < p2) {
    				printf("%d:0x%x,0x%x\n", Nr, phdr1->p_filesz, phdr1->p_memsz);
-			} else if (p_paddr1 + p_memsz1 <= p_paddr2 && q1 >= p2) {
+			} else if (p_vaddr1 + p_filesz1 <= p_vaddr2 && q1 >= p2) {
 				printf("Overlay at page va : 0x%x\n", p2);
 			} else {
 				printf("Conflict at page va : 0x%x\n", p2);
