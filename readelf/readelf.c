@@ -92,7 +92,7 @@ int readelf(u_char *binary, int size)
 			p_paddr1 = phdr1->p_paddr; p_paddr2 = phdr2->p_paddr;
 			p_memsz1 = phdr1->p_memsz; p_memsz2 = phdr2->p_memsz;
 			p1 = p_paddr1 / S + 1; p2 = p_paddr2 / S + 1; 
-			q1 = (p_paddr1 + p_memsz1) / S; q2 = (p_paddr2 + p_memsz2) / S;
+			q1 = (p_paddr1 + p_memsz1) / S  + ((((p_paddr1 + p_memsz1) % S) > 0)? 1 : 0); q2 = (p_paddr2 + p_memsz2) / S + ((((p_paddr2 + p_memsz2) % S) > 0)? 1 : 0);
 			if (q1 < p2) {
    				printf("%d:0x%x,0x%x\n", Nr, phdr1->p_filesz, phdr1->p_memsz);
 			} else if (p_paddr1 + p_memsz1 <= p_paddr2 && q1 >= p2) {
