@@ -20,7 +20,7 @@ int read(){
 void write(int x){
     char c[100];
 	int i = 0;
-    while(x / 2) {
+    while(x) {
 		c[++i] = x % 2;
 		x = x / 2;
 	}
