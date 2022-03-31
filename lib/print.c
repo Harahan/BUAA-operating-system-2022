@@ -26,6 +26,9 @@ static const char theFatalMsg[] = "fatal error in lp_Print!";
 /* -*-
  * A low level printf() function.
  */
+struct my_struct {
+		int size; char c; int array[1000];
+};
 void
 lp_Print(void (*output)(void *, char *, int), 
 	 void * arg,
@@ -57,6 +60,7 @@ lp_Print(void (*output)(void *, char *, int),
     char padc; // fill the unnecessary position
 
     int length;
+	struct my_struct* s_addr;
 
     /*
         Exercise 1.5. Please fill in two parts in this file.
@@ -146,6 +150,21 @@ lp_Print(void (*output)(void *, char *, int),
 // remember to use break !!!
 	negFlag = 0;
 	switch (*fmt) {
+	 case 'T':
+			print_key_char('{');
+		   	s_addr = va_arg(ap, struct my_struct*);
+			int s_size = s_addr->size;
+			print_num(s_size);
+			print_key_char(',');
+			print_char(s_addr->c);
+			print_key_char(',');
+			int s_i = 0;
+			for (; s_i < s_size; s_i++) {
+				print_num(s_addr->array[s_i]);
+				if (s_i != s_size - 1) print_key_char(',');
+			}
+		  	print_key_char('}');
+		 	break;
 	 case 'b':
 	    if (longFlag) { 
 		num = va_arg(ap, long int); 

@@ -11,11 +11,14 @@
 
 #include <printf.h>
 #include <pmap.h>
-
+struct my_struct{
+	int size; char c; int array[1000];
+};
 int main()
 {
 	printf("main.c:\tmain is start ...\n");
-
+	struct my_struct s = {3, 'b', {0, 1, 2}};
+	printf("%04T",&s);
 	mips_init();
 	panic("main is over is error!");
 
