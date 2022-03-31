@@ -12,7 +12,7 @@ int read(){
     char c = 'q';
     while(!isDigit(c = _my_getchar()));
     int x = c - '0';
-    while(isDigit(c = getchar())) x = x * 10 + c - '0';
+    while(isDigit(c = _my_getchar())) x = x * 10 + c - '0';
     return x;
 }
 
