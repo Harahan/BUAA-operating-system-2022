@@ -10,7 +10,7 @@ INCLUDES        := -I../include
 all: my_driver.o my_cal.o
 
 clean:
-        rm -rf *~ *.o
+	rm -rf *~ *.o
 
 
 include ../include.mk
