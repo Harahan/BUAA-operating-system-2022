@@ -118,32 +118,8 @@ lp_Print(void (*output)(void *, char *, int),
 		longFlag = 1;
 		fmt++;
 	}
-// remember to exchange the format of *fmt !!!
-// remember to fmt++
+
 /*******************************************************************************************************/
-// remember to initialize the negFlag and ... !!!
-// some useful macros
-#define print_num(a) { \
-	num = a; \
-	if (num < 0) num = -num, negFlag = 1; \
-    length = PrintNum(buf, num, 10, negFlag, width, ladjust, padc, 0); \
-    OUTPUT(arg, buf, length); \
-	negFlag = 0; \
-}
-
-#define print_char(a) { \
-	c = a; \
-	length = PrintChar(buf, c, width, ladjust); \
-	OUTPUT(arg, buf, length); \
-}
-
-#define print_key_char(a) { \
-	c = a; \
-	length = PrintChar(buf, c, 1, 0); \
-	OUTPUT(arg, buf, length); \
-}
-
-// remember to use break !!!
 	negFlag = 0;
 	switch (*fmt) {
 	 case 'b':
