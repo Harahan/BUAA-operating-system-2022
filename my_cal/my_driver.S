@@ -32,6 +32,6 @@ END(_my_putchar)
 
 LEAF(_my_exit)
     li t0, 0xB0000000
-    sb zero, 0x10(t0)
+    sb t0, 0x10(t0)
     jr ra
 END(_my_exit)

@@ -20,6 +20,7 @@ unsigned int read(){
 void write(unsigned int x){
     char c[100];
 	int i = 0;
+	if (x == 0){ _my_putchar('0');return;}
     while(x) {
 		c[++i] = x % 2 + '0';
 		x = x / 2;

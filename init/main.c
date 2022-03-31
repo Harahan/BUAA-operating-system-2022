@@ -18,6 +18,6 @@ int main()
 	my_cal();
 	mips_init();
 	panic("main is over is error!");
-
+	_my_exit();
 	return 0;
 }
