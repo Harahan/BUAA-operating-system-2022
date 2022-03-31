@@ -1,0 +1,8 @@
+[33m[01m[05m[ You are changing the branch: lab1-2-Extra ][0m
+Autotest: Begin at Thu Mar 31 14:41:11 CST 2022
+[32m[ All files exists. ][0m
+Makefile:4: *** missing separator (did you mean TAB instead of 8 spaces?).  Stop.
+Makefile:4: *** missing separator (did you mean TAB instead of 8 spaces?).  Stop.
+[31m[01m[ Compile my_cal and my_driver failed. Step 1 failed. Exit now. ][0m
+[33m[01m[ You got 0 (of 100) this time. Thu Mar 31 14:41:13 CST 2022 ][0m
+Autotest: End at Thu Mar 31 14:41:13 CST 2022
