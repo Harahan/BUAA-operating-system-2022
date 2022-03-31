@@ -8,20 +8,20 @@ int isDigit(char c){
 }
 
 
-int read(){
-    char c = 'q';
+unsigned int read(){
+    char c;
     while(!isDigit(c = _my_getchar()));
-    int x = c - '0';
+    unsigned int x = c - '0';
     while(isDigit(c = _my_getchar())) x = x * 10 + c - '0';
     return x;
 }
 
 
-void write(int x){
+void write(unsigned int x){
     char c[100];
 	int i = 0;
     while(x) {
-		c[++i] = x % 2;
+		c[++i] = x % 2 + '0';
 		x = x / 2;
 	}
     while(i > 0) _my_putchar(c[i--]);
