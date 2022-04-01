@@ -49,3 +49,5 @@ include include.mk
 # run kernal
 run:
 	/OSLAB/gxemul -E testmips -C R3000 -M 64 $(vmlinux_elf)
+debugging:
+	/OSLAB/gxemul -E testmips -C R3000 -M 64 -V $(vmlinux_elf)
