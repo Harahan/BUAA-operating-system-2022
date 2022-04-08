@@ -104,7 +104,7 @@ static Pte *boot_pgdir_walk(Pde *pgdir, u_long va, int create)
     if ((*pgdir_entryp & PTE_V) == 0) {
         if (create) {
             pgtable = (Pte*) alloc(BY2PG, BY2PG, 1);
-            (*pgdir_entryp) = (PADDR((u_long)pgtable))|PTE_V | PTE_R;
+            *pgdir_entryp = (PADDR((u_long)pgtable))|PTE_V | PTE_R;
         } else return 0;
     }
 
@@ -131,9 +131,9 @@ void boot_map_segment(Pde *pgdir, u_long va, u_long size, u_long pa, int perm)
 
 	/* Step 2: Map virtual address space to physical address. */
 	/* Hint: Use `boot_pgdir_walk` to get the page table entry of virtual address `va`. */
-    for (i = 0; i < size; i++) {
+    for (i = 0; i < size; i += BY2PG) {
         pgtable_entry = boot_pgdir_walk(pgdir, va + i, 1);
-        *pgtable_entry = (PTE_ADDR(pa + i)) | perm | PTE_V;
+        *pgtable_entry = (pa + i) | perm | PTE_V;
     }
 
 }
@@ -299,6 +299,7 @@ int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte)
         if (create) {
             if ((ret = page_alloc(&ppage))) return ret;
             *pgdir_entryp = (page2pa(ppage)) | PTE_V | PTE_R;
+            ppage->pp_ref++;
             pgtable = (Pte*)KADDR(page2pa(ppage));
         } else {
             *ppte = 0;
@@ -356,7 +357,7 @@ int page_insert(Pde *pgdir, struct Page *pp, u_long va, u_int perm)
         return ret; // exception
 	/* Step 3.2 Insert page and increment the pp_ref */
     //fill in the page table
-    *pgtable_entry = (page2pa(pp)) | perm;
+    *pgtable_entry = (page2pa(pp)) | PERM;
     pp->pp_ref++;
 	return 0;
 }
