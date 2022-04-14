@@ -112,7 +112,7 @@ void buddy_free(u_int pa);
 
 void init_node(int ref, u_long vaddr, u_long size, node *q);
 int get_i(u_long t);
-int __buddy_alloc(u_int size, u_int *pa, u_char *pi, node *head);
+int __buddy_alloc(u_int size, u_int **pa, u_char *pi, node *head);
 void __buddy_free(u_int pa, node* head);
 extern struct Page *pages;
 

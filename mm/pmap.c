@@ -217,13 +217,13 @@ void init_node(int ref, u_long vaddr, u_long size, node *q) {
 	q->r = NULL;
 }
 void buddy_init(void){
-	u_long vaddr = 0x82000000;
+	u_long vaddr = 0x2000000;
 	int i = 0;
 	for (; i < 8; i++)
 	init_node(0, vaddr + i * (0x2000000>>3), 0x2000000>>3, &(node_head[i]));
 }
 int get_i(u_long t){
-	t = t/ 4 ;
+	t = t/ (BY2PG * 2) ;
 	int ret = 0;
 	while(t){
 		t >>= 1;
@@ -231,35 +231,42 @@ int get_i(u_long t){
 	}
 	return ret;
 }
-int __buddy_alloc(u_int size, u_int *pa, u_char *pi, node *head) {
-	if (head->ref == 1 && (head->size) < size) return -1;
+int __buddy_alloc(u_int size, u_int **pa, u_char *pi, node *head) {
+//	printf("head_size[%x], head_addr[%x]\n", head->size, head->vaddr);
+	if (head->ref == 1 || (head->size) < size) return -1;
 	if ((head->size) / 2 < size || (head->size) == BY2PG) {
-		pa = head->vaddr;
-		*pa = get_i(head->size);
-		return 0;
+		*pa = head->vaddr;
+		head->ref = 1;
+//		printf("[%x]\n", *pa);
+		*pi = get_i(head->size);
+		return head->vaddr;
 	}
+	node l, r;
 	if (head->l == NULL) {
-		node l;
+		//node l;
 		init_node(0, head->vaddr, (head->size) / 2, &l);
 		head->l = &l;
 	}
 	if (head->r == NULL) {
-		node r;
-		init_node(0, (head->vaddr) + (head->size) / 2, (head->size) / 2, &r);
+		//node r;
+		init_node(0, ((head->vaddr) + (head->size) / 2), (head->size) / 2, &r);
 		head->r = &r;
 	}
-	if (__buddy_alloc(size, pa, pi, head->l) == 0) {
-		return 0;
+	int t;
+	//printf("l[%x]r[%x]_[%x]_[%x]\n", (head->l)->vaddr, (head->r)->vaddr, head->vaddr, head->vaddr + (head->size) / 2);
+	if ((t=__buddy_alloc(size, &pa, pi, head->l)) != -1) {
+		return t;
 	}
-	if (__buddy_alloc(size, pa, pi, head->r) == 0) {
-		return 0;
+	if ((t=__buddy_alloc(size, &pa, pi, head->r)) != -1) {
+		return t;
 	}
 	return -1;
 }
 int buddy_alloc(u_int size, u_int *pa, u_char *pi) {
-	int i = 0;
+	int i = 0, t = -1;
 	for (; i < 8; i++) {
-		if (__buddy_alloc(size, pa, pi, &node_head[i]) == 0) {
+		if ((t=__buddy_alloc(size, &pa, pi, &node_head[i])) != -1) {
+			*pa = (u_int*)(t);
 			return 0;
 		}
 	}
@@ -270,8 +277,11 @@ void __buddy_free(u_int pa, node* head) {
 		head->ref = 0;
 		return;
 	}
-	if ((head->r)->vaddr >= pa) __buddy_free(pa, head->r);
+	if ((head->r)->vaddr <= pa) {__buddy_free(pa, head->r);
+		//if ((head->r)->ref == 0 && head)
+	}
 	else __buddy_free(pa, head->l);
+	
 }
 void buddy_free(u_int pa) {
 	int i = 0;
