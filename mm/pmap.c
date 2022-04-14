@@ -208,6 +208,84 @@ void page_init(void)
     }
 }
 
+node node_head[8];
+void init_node(int ref, u_long vaddr, u_long size, node *q) {
+	q->ref = ref;
+	q->vaddr = vaddr;
+	q->size = size;
+	q->l = NULL;
+	q->r = NULL;
+}
+void buddy_init(void){
+	u_long vaddr = 0x82000000;
+	int i = 0;
+	for (; i < 8; i++)
+	init_node(0, vaddr + i * (0x2000000>>3), 0x2000000>>3, &(node_head[i]));
+}
+int get_i(u_long t){
+	t = t/ 4 ;
+	int ret = 0;
+	while(t){
+		t >>= 1;
+		ret += 1;
+	}
+	return ret;
+}
+int __buddy_alloc(u_int size, u_int *pa, u_char *pi, node *head) {
+	if (head->ref == 1 && (head->size) < size) return -1;
+	if ((head->size) / 2 < size || (head->size) == BY2PG) {
+		pa = head->vaddr;
+		*pa = get_i(head->size);
+		return 0;
+	}
+	if (head->l == NULL) {
+		node l;
+		init_node(0, head->vaddr, (head->size) / 2, &l);
+		head->l = &l;
+	}
+	if (head->r == NULL) {
+		node r;
+		init_node(0, (head->vaddr) + (head->size) / 2, (head->size) / 2, &r);
+		head->r = &r;
+	}
+	if (__buddy_alloc(size, pa, pi, head->l) == 0) {
+		return 0;
+	}
+	if (__buddy_alloc(size, pa, pi, head->r) == 0) {
+		return 0;
+	}
+	return -1;
+}
+int buddy_alloc(u_int size, u_int *pa, u_char *pi) {
+	int i = 0;
+	for (; i < 8; i++) {
+		if (__buddy_alloc(size, pa, pi, &node_head[i]) == 0) {
+			return 0;
+		}
+	}
+	return -1;
+}
+void __buddy_free(u_int pa, node* head) {
+	if (pa == head->vaddr && head->ref == 1) {
+		head->ref = 0;
+		return;
+	}
+	if ((head->r)->vaddr >= pa) __buddy_free(pa, head->r);
+	else __buddy_free(pa, head->l);
+}
+void buddy_free(u_int pa) {
+	int i = 0;
+	for (; i < 8; i++) {
+		if (pa < node_head[i].vaddr) {
+			__buddy_free(pa, &node_head[i - 1]);
+			return;
+		} else if (pa == node_head[i].vaddr && node_head[i].ref == 1) {
+			node_head[i].ref = 0;
+			return;
+		}
+	}
+	__buddy_free(pa, &node_head[7]);
+}
 /* Exercise 2.4 */
 /*Overview:
   Allocates a physical page from free memory, and clear this page.

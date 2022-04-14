@@ -20,6 +20,13 @@ struct Page {
 
 	u_short pp_ref;
 };
+typedef struct no{
+	int ref;
+	u_long vaddr;
+	u_long size;
+	struct no *l ;
+	struct no *r;
+} node;
 
 extern struct Page *pages;
 
@@ -99,7 +106,14 @@ void page_remove(Pde *pgdir, u_long va) ;
 void tlb_invalidate(Pde *pgdir, u_long va);
 
 void boot_map_segment(Pde *pgdir, u_long va, u_long size, u_long pa, int perm);
+void buddy_init(void);
+int buddy_alloc(u_int size, u_int *pa, u_char *pi);
+void buddy_free(u_int pa);
 
+void init_node(int ref, u_long vaddr, u_long size, node *q);
+int get_i(u_long t);
+int __buddy_alloc(u_int size, u_int *pa, u_char *pi, node *head);
+void __buddy_free(u_int pa, node* head);
 extern struct Page *pages;
 
 
