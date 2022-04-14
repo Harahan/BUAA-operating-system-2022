@@ -259,7 +259,15 @@ int page_alloc(struct Page **pp)
     if (LIST_EMPTY(&page_free_list))
         return -E_NO_MEM;
     ppage_temp = LIST_FIRST(&page_free_list);
-    LIST_REMOVE(ppage_temp, pp_link);
+	int flag = 0;
+	LIST_FOREACH(ppage_temp, &page_free_list, pp_link) {
+		if (ppage_temp->pp_protected == 0) {
+			flag = 1;
+			break;
+		}
+	}
+	if (flag) LIST_REMOVE(ppage_temp, pp_link);
+	else return -E_NO_MEM;
 
 	/* Step 2: Initialize this page.
 	 * Hint: use `bzero`. */
