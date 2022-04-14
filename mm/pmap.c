@@ -198,16 +198,44 @@ void page_init(void)
 	 * filed to 1) */
     /**PADDR --- translates from kernel virtual address to physical address.(mmu.h)*/
     int size = PADDR(freemem) / BY2PG, i = 0;
-    for (; i < size; i++)
+    for (; i < size; i++) {
         pages[i].pp_ref = 1;
+		pages[i].pp_protected = 0;
+	}
 
 	/* Step 4: Mark the other memory as free. */
     for (; i < npage; i++) {
         pages[i].pp_ref = 0;
+		pages[i].pp_protected = 0;
         LIST_INSERT_HEAD((&page_free_list), (pages + i), pp_link);
     }
 }
 
+int page_protect(struct Page *pp) {
+	if (pp->pp_protected == 0) {
+		struct Page *page_i;
+		LIST_FOREACH(page_i, &page_free_list, pp_link) {
+			if (page_i == pp) {
+				pp->pp_protected = 1;
+				return 0;
+			}
+		}
+		return -1;
+	} else {
+		return -2;
+	}
+}
+
+int page_status_query(struct Page *pp) {
+	if (pp->pp_protected == 1) return 3;
+	struct Page *page_i;
+	LIST_FOREACH(page_i, &page_free_list, pp_link) {
+		if (page_i == pp) {
+			return 2;
+		}
+	}
+	return 1;
+}
 /* Exercise 2.4 */
 /*Overview:
   Allocates a physical page from free memory, and clear this page.
