@@ -234,8 +234,8 @@ int get_i(u_long t){
 int __buddy_alloc(u_int size, u_int **pa, u_char *pi, node *head) {
 //	printf("head_size[%x], head_addr[%x]\n", head->size, head->vaddr);
 	if (head->ref == 1 || (head->size) < size) return -1;
-	if ((head->size) / 2 < size || (head->size) == BY2PG) {
-		*pa = head->vaddr;
+	if (((head->size) / 2 < size || (head->size) == BY2PG) && (head->l == NULL || head->l->ref == 0) && (head->r == NULL || head->r->ref == 0)) {
+		//*pa = head->vaddr;
 		head->ref = 1;
 //		printf("[%x]\n", *pa);
 		*pi = get_i(head->size);
