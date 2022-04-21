@@ -201,7 +201,7 @@ void page_init(void)
         pages[i].pp_ref = 1;
 
 	/* Step 4: Mark the other memory as free. */
-    for (; i < (npage / 4 * 3); i++) {
+    for (; i < 12287; i++) {
         pages[i].pp_ref = 0;
         LIST_INSERT_HEAD((&page_free_list), (pages + i), pp_link);
     }
@@ -279,7 +279,7 @@ struct Page* page_migrate(Pde* pgdir, struct Page *pp) {
 		tp = LIST_FIRST(&page_free_list);
 	}
 	LIST_REMOVE(tp, pp_link);
-	bcopy(page2pa(pp), page2pa(tp), BY2PG);
+	bcopy(page2kva(pp), page2kva(tp), BY2PG);
 	int i, cnt = 0;
 	for (i = 0; i < 1024; i++) {
 		Pde *pgdir_entryp = pgdir + i;
@@ -298,6 +298,8 @@ struct Page* page_migrate(Pde* pgdir, struct Page *pp) {
 			}
 		}
 	}
+	tp->pp_ref = cnt;
+	pp->pp_ref = 0;
 	page_free(pp);
 	return tp;
 }
