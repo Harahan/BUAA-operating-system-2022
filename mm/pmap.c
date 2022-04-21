@@ -15,9 +15,8 @@ Pde *boot_pgdir;
 
 struct Page *pages;
 static u_long freemem;
-
-static struct Page_list page_free_list;	/* Free list of physical pages */
-
+struct Page_list page_free_list;	/* Free list of physical pages */
+struct Page_list fast_page_free_list;
 
 /* Exercise 2.1 */
 /* Overview:
@@ -189,7 +188,7 @@ void page_init(void)
 	/* Step 1: Initialize page_free_list. */
 	/* Hint: Use macro `LIST_INIT` defined in include/queue.h. */
     LIST_INIT(&page_free_list);
-
+	LIST_INIT(&fast_page_free_list);
 	/* Step 2: Align `freemem` up to multiple of BY2PG. */
     /**ROUND --- [freemem / BY2PG] * BY2PG (types.h)*/
     freemem = ROUND(freemem, BY2PG);
@@ -202,10 +201,15 @@ void page_init(void)
         pages[i].pp_ref = 1;
 
 	/* Step 4: Mark the other memory as free. */
-    for (; i < npage; i++) {
+    for (; i < (npage / 4 * 3); i++) {
         pages[i].pp_ref = 0;
         LIST_INSERT_HEAD((&page_free_list), (pages + i), pp_link);
     }
+
+    for (; i < npage; i++) {
+        pages[i].pp_ref = 0;
+        LIST_INSERT_HEAD((&fast_page_free_list), (pages + i), pp_link);
+	}
 }
 
 /* Exercise 2.4 */
@@ -254,16 +258,49 @@ void page_free(struct Page *pp)
     if (pp->pp_ref > 0) return;
 
 	/* Step 2: If the `pp_ref` reaches 0, mark this page as free and return. */
-    if (pp->pp_ref == 0) {
+    if (pp->pp_ref == 0 && (page2pa(pp) >> 20) < 48) {
         LIST_INSERT_HEAD((&page_free_list), pp, pp_link);
         return;
-    }
+    } else if (pp->pp_ref == 0) {
+        LIST_INSERT_HEAD((&fast_page_free_list), pp, pp_link);
+        return;
+	}
 
 	/* If the value of `pp_ref` is less than 0, some error must occurr before,
 	 * so PANIC !!! */
 	panic("cgh:pp->pp_ref is less than zero\n");
 }
 
+struct Page* page_migrate(Pde* pgdir, struct Page *pp) {
+	struct Page *tp;
+	if ((page2pa(pp)>>20) < 48) {
+		tp = LIST_FIRST(&fast_page_free_list);
+	} else {
+		tp = LIST_FIRST(&page_free_list);
+	}
+	LIST_REMOVE(tp, pp_link);
+	bcopy(page2pa(pp), page2pa(tp), BY2PG);
+	int i, cnt = 0;
+	for (i = 0; i < 1024; i++) {
+		Pde *pgdir_entryp = pgdir + i;
+		if ((*pgdir_entryp) & PTE_V) {
+			Pte *pgtable = KADDR(PTE_ADDR(*pgdir_entryp));
+			int j;
+			for (j = 0; j < 1024; j++) {
+				Pte *pgtable_entryp = pgtable + j;
+				if ((*pgtable_entryp) & PTE_V) {
+					if (PTE_ADDR(*pgtable_entryp) == page2pa(pp)) {
+						cnt++;
+						*pgtable_entryp = (*pgtable_entryp) & 0xFFF;
+						*pgtable_entryp |= page2pa(tp);
+					}
+				}
+			}
+		}
+	}
+	page_free(pp);
+	return tp;
+}
 /* Exercise 2.8 */
 /*Overview:
   Given `pgdir`, a pointer to a page directory, pgdir_walk returns a pointer
