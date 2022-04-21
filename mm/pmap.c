@@ -413,7 +413,7 @@ int inverted_page_lookup(Pde *pgdir, struct Page *pp, int vpn_buffer[]) {
 			int j;
 			for (j = 0; j < 1024; ++j) {
 				Pte *pgtable_entryp = pgtable + j;
-				if ((*pgtable_entryp) & PTE_V) {
+				if ((1)) {
 					if (page2pa(pp) == PTE_ADDR(*pgtable_entryp)) {
 						vpn_buffer[cnt++] = ((i <<22) + (j << 12)) >> 12;
 					}
