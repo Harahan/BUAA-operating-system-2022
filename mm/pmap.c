@@ -264,6 +264,95 @@ void page_free(struct Page *pp)
 	panic("cgh:pp->pp_ref is less than zero\n");
 }
 
+node node_head[8];
+void init_node(int ref, u_long vaddr, u_long size, node *q) {
+	q->ref = ref;
+	q->vaddr = vaddr;
+	q->size = size;
+	q->l = NULL;
+	q->r = NULL;
+}
+void buddy_init(void){
+	u_long vaddr = 0x2000000;
+	int i = 0;
+	for (; i < 8; i++)
+	init_node(0, vaddr + i * (0x2000000>>3), 0x2000000>>3, &(node_head[i]));
+}
+int get_i(u_long t){
+	t = t/ (BY2PG * 2) ;
+	int ret = 0;
+	while(t){
+		t >>= 1;
+		ret += 1;
+	}
+	return ret;
+}
+int __buddy_alloc(u_int size, u_char *pi, node *head) {
+//	printf("head_size[%x], head_addr[%x]\n", head->size, head->vaddr);
+	if (head->ref == 1 || (head->size) < size) return -1;
+	if (((head->size) / 2 < size || (head->size) == BY2PG) && (head->l == NULL || head->l->ref == 0) && (head->r == NULL || head->r->ref == 0)) {
+		//*pa = head->vaddr;
+		head->ref = 1;
+//		printf("[%x]\n", *pa);
+		*pi = get_i(head->size);
+		return head->vaddr;
+	}
+	node *l, *r;
+	if (head->l == NULL) {
+		l = (node*)alloc(sizeof(node), 1, 1);
+		init_node(0, head->vaddr, (head->size) / 2, l);
+		head->l = l;
+	}
+	if (head->r == NULL) {
+		r = (node*)alloc(sizeof(node), 1, 1);
+		init_node(0, ((head->vaddr) + (head->size) / 2), (head->size) / 2, r);
+		head->r = r;
+	}
+	int t;
+	//printf("l[%x]r[%x]_[%x]_[%x]\n", (head->l)->vaddr, (head->r)->vaddr, head->vaddr, head->vaddr + (head->size) / 2);
+	if ((t=__buddy_alloc(size, pi, head->l)) != -1) {
+		return t;
+	}
+	if ((t=__buddy_alloc(size, pi, head->r)) != -1) {
+		return t;
+	}
+	return -1;
+}
+int buddy_alloc(u_int size, u_int *pa, u_char *pi) {
+	int i = 0, t = -1;
+	for (; i < 8; i++) {
+		if ((t=__buddy_alloc(size, pi, &node_head[i])) != -1) {
+			*pa = (u_int*)(t);
+			return 0;
+		}
+	}
+	return -1;
+}
+void __buddy_free(u_int pa, node* head) {
+	if (pa == head->vaddr && head->ref == 1) {
+		head->ref = 0;
+		return;
+	}
+	if ((head->r)->vaddr <= pa) {__buddy_free(pa, head->r);
+		//if ((head->r)->ref == 0 && head)
+	}
+	else __buddy_free(pa, head->l);
+	
+}
+void buddy_free(u_int pa) {
+	int i = 0;
+	for (; i < 8; i++) {
+		if (pa < node_head[i].vaddr) {
+			__buddy_free(pa, &node_head[i - 1]);
+			return;
+		} else if (pa == node_head[i].vaddr && node_head[i].ref == 1) {
+			node_head[i].ref = 0;
+			return;
+		}
+	}
+	__buddy_free(pa, &node_head[7]);
+}
+
 /* Exercise 2.8 */
 /*Overview:
   Given `pgdir`, a pointer to a page directory, pgdir_walk returns a pointer
