@@ -287,13 +287,16 @@ int get_i(u_long t){
 	}
 	return ret;
 }
+int __buddy_empty(node *head) {
+	if (head == NULL) return 1;
+	if (head->ref == 1) return 0;
+	if (head->size == BY2PG && head->ref == 0) return 1;
+	return __buddy_empty(head->l) & __buddy_empty(head->r);
+}
 int __buddy_alloc(u_int size, u_char *pi, node *head) {
-//	printf("head_size[%x], head_addr[%x]\n", head->size, head->vaddr);
 	if (head->ref == 1 || (head->size) < size) return -1;
-	if (((head->size) / 2 < size || (head->size) == BY2PG) && (head->l == NULL || head->l->ref == 0) && (head->r == NULL || head->r->ref == 0)) {
-		//*pa = head->vaddr;
+	if (((head->size) / 2 < size || (head->size) == BY2PG) && __buddy_empty(head)) {
 		head->ref = 1;
-//		printf("[%x]\n", *pa);
 		*pi = get_i(head->size);
 		return head->vaddr;
 	}
@@ -309,7 +312,6 @@ int __buddy_alloc(u_int size, u_char *pi, node *head) {
 		head->r = r;
 	}
 	int t;
-	//printf("l[%x]r[%x]_[%x]_[%x]\n", (head->l)->vaddr, (head->r)->vaddr, head->vaddr, head->vaddr + (head->size) / 2);
 	if ((t=__buddy_alloc(size, pi, head->l)) != -1) {
 		return t;
 	}
@@ -333,9 +335,8 @@ void __buddy_free(u_int pa, node* head) {
 		head->ref = 0;
 		return;
 	}
-	if ((head->r)->vaddr <= pa) {__buddy_free(pa, head->r);
-		//if ((head->r)->ref == 0 && head)
-	}
+	if ((head->r)->vaddr <= pa) __buddy_free(pa, head->r);
+	
 	else __buddy_free(pa, head->l);
 	
 }
