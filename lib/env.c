@@ -19,7 +19,7 @@ extern Pde *boot_pgdir;
 extern char *KERNEL_SP;
 
 static u_int asid_bitmap[2] = {0}; // 64
-u_int sys_asid = 0x4;
+static u_int sys_asid = 0x4;
 
 /* Overview:
  *  This function is to allocate an unused ASID
