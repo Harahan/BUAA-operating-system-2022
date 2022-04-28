@@ -184,7 +184,8 @@ u_int exam_env_run(struct Env *e) {
 			}
 		} else {
 			asid_bitmap[asid_i >> 5] |= (1 << (asid_i & 31));
-			e->env_asid |= (sys_asid << 6);
+			e->env_asid &= 0x3f;
+			(e->env_asid) |= (sys_asid << 6);
 		//printf("4 sys_asid = %x   asid_v = %x asid_i = %x\n", sys_asid, (e->env_asid) >> 6, (e->env_asid) & 0x3f);
 			return 0;
 		}
