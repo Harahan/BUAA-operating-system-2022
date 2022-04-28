@@ -19,7 +19,7 @@ extern Pde *boot_pgdir;
 extern char *KERNEL_SP;
 
 static u_int asid_bitmap[2] = {0}; // 64
-
+u_int sys_asid = 0x4;
 
 /* Overview:
  *  This function is to allocate an unused ASID
@@ -67,9 +67,11 @@ static void asid_free(u_int i) {
  *  return e's envid on success
  */
 u_int mkenvid(struct Env *e) {
-    u_int idx = e - envs;
-    u_int asid = asid_alloc();
-    return (asid << (1 + LOG2NENV)) | (1 << LOG2NENV) | idx;
+    /*Hint: lower bits of envid hold e's position in the envs array. */
+u_int idx = (u_int)e - (u_int)envs;
+idx /= sizeof(struct Env);
+/*Hint: avoid envid being zero. */
+return (1 << (LOG2NENV)) | idx; //LOG2NENV=10
 }
 
 /* Overview:
@@ -144,6 +146,8 @@ env_init(void)
      * Choose the correct loop order to finish the insertion.
      * Make sure, after the insertion, the order of envs in the list
      *   should be the same as that in the envs array. */
+	sys_asid = 0x4;
+	asid_bitmap[0] = asid_bitmap[1] = 0;
     for (i = NENV - 1; i >= 0; i--) {
         envs[i].env_status = ENV_FREE;
         LIST_INSERT_HEAD(&env_free_list, &envs[i], env_link);
@@ -151,7 +155,40 @@ env_init(void)
 
 }
 
-
+void exam_env_free(struct Env *e) {
+	u_int asid_v = (e->env_asid) >> 6;
+	u_int asid_i = (e->env_asid) & 0x3f;
+	if (asid_v == sys_asid) {
+		asid_free(asid_i);
+	} 
+}
+u_int exam_env_run(struct Env *e) {
+	u_int asid_v = (e->env_asid) >> 6;
+	u_int asid_i = (e->env_asid) & 0x3f;
+	if (asid_v == sys_asid) {
+	//	printf("1 sys_asid = %x   asid_v = %x asid_i = %x\n", sys_asid, (e->env_asid) >> 6, (e->env_asid) & 0x3f);
+		return 0;
+	} else {
+		if (asid_bitmap[asid_i >> 5] & (1 << (asid_i & 31))) {
+			if (!(asid_bitmap[0] == 0xffffffff && asid_bitmap[1] == 0xffffffff)) {
+				e->env_asid = (sys_asid << 6) | asid_alloc();
+		//printf("2 sys_asid = %x   asid_v = %x asid_i = %x\n", sys_asid, (e->env_asid) >> 6, (e->env_asid) & 0x3f);
+				return 0;
+			} else {
+				sys_asid += 1;
+				asid_bitmap[0] = asid_bitmap[1] = 0;
+				e->env_asid = (sys_asid << 6) | asid_alloc();
+		//printf("3 sys_asid = %x   asid_v = %x asid_i = %x\n", sys_asid, (e->env_asid) >> 6, (e->env_asid) & 0x3f);
+				return 1;
+			}
+		} else {
+			asid_bitmap[asid_i >> 5] |= (1 << (asid_i & 31));
+			e->env_asid |= ((sys_asid << 6) | 0x0);
+		//printf("4 sys_asid = %x   asid_v = %x asid_i = %x\n", sys_asid, (e->env_asid) >> 6, (e->env_asid) & 0x3f);
+			return 0;
+		}
+	}
+}
 /* Overview:
  *  Initialize the kernel virtual memory layout for 'e'.
  *  Allocate a page directory, set e->env_pgdir and e->env_cr3 accordingly,
@@ -243,7 +280,7 @@ env_alloc(struct Env **new, u_int parent_id)
     e->env_id = mkenvid(e);
     e->env_status = ENV_RUNNABLE;
     e->env_parent_id = parent_id;
-
+	e->env_asid = 0;
     /* Step 4: Focus on initializing the sp register and cp0_status of env_tf field, located at this new Env. */
     e->env_tf.cp0_status = 0x10001004;
     e->env_tf.regs[29] = USTACKTOP;
