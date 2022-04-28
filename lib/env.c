@@ -19,8 +19,8 @@ extern Pde *boot_pgdir;
 extern char *KERNEL_SP;
 
 static u_int asid_bitmap[2] = {0}; // 64
-
-
+u_int s1, s2;
+int w1[1024], w2[1024], size_1, size_2;
 /* Overview:
  *  This function is to allocate an unused ASID
  *
@@ -151,7 +151,47 @@ env_init(void)
 
 }
 
+void S_init(int s, int num) {
+	if (s == 1)  s1 = num;
+	else s2 = num;
+}
 
+
+int P(struct Env* e, int s) {
+	int *tmp;
+	if (s == 1) {
+		tmp = &s1;
+	} else {
+		tmp = &s2;;
+	}
+	if (*tmp > 0) {
+		(*tmp)--;
+		if (s == 1) e->env_st++;
+		else e->env_st1++;
+		return 0;
+	} else {
+		if (s == 1) {w1[size_1++] = (e->env_id) & 0x3ff; e->env_ct += 1;}
+		else  {w2[size_2++] = (e->env_id) & 0x3ff; e->env_ct += 2;}
+	}
+}
+int V(struct Env *e, int s) {
+	if (e->env_ct >= 0) return -1;
+	if (s == 1){ s1++; if (e->env_st > 0) e->env_st--;}
+	else {s2++; if (e->env_st1 > 0) e->env_st1--;}
+	return 0;
+
+}
+int get_status(struct Env * e) {
+	if (e->env_ct > 0) return 1;
+	else if (e->env_ct == 0 && (e->env_st > 0 || e->env_st1 > 0)) return 2;
+	else return 3;
+}
+int my_env_create() {
+		struct Env* e;int r;
+	//env_create_priority(0, 0, 0);
+    if ((r == env_alloc(&e, 0)) != 0) return -1;
+	return e->env_id;
+}
 /* Overview:
  *  Initialize the kernel virtual memory layout for 'e'.
  *  Allocate a page directory, set e->env_pgdir and e->env_cr3 accordingly,

@@ -23,7 +23,10 @@ struct Env {
 	LIST_ENTRY(Env) env_link;       // Free list
 	u_int env_id;                   // Unique environment identifier
 	u_int env_parent_id;            // env_id of this env's parent
-	u_int env_status;               // Status of the environment
+	u_int env_status;  
+	u_int env_st;// Status of the environment
+	u_int env_ct;
+	u_int env_st1;
 	Pde  *env_pgdir;                // Kernel virtual address of page dir
 	u_int env_cr3;
 	LIST_ENTRY(Env) env_sched_link;
@@ -58,7 +61,11 @@ void env_destroy(struct Env *e);
 
 int envid2env(u_int envid, struct Env **penv, int checkperm);
 void env_run(struct Env *e);
-
+void S_init(int s, int num);
+int P(struct Env* e, int s);
+int V(struct Env* e, int s);
+int get_status(struct Env* e);
+int my_env_create();
 
 // for the grading script
 #define ENV_CREATE2(x, y) \
