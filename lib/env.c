@@ -150,6 +150,7 @@ env_init(void)
 	asid_bitmap[0] = asid_bitmap[1] = 0;
     for (i = NENV - 1; i >= 0; i--) {
         envs[i].env_status = ENV_FREE;
+		envs[i].env_asid = 0;
         LIST_INSERT_HEAD(&env_free_list, &envs[i], env_link);
     }
 
@@ -177,7 +178,7 @@ u_int exam_env_run(struct Env *e) {
 			} else {
 				sys_asid += 1;
 				asid_bitmap[0] = asid_bitmap[1] = 0;
-				e->env_asid &= (0xffffffff - 0x3f + asid_alloc());
+				e->env_asid =  (sys_asid << 6) | asid_alloc();
 		//printf("3 sys_asid = %x   asid_v = %x asid_i = %x\n", sys_asid, (e->env_asid) >> 6, (e->env_asid) & 0x3f);
 				return 1;
 			}
