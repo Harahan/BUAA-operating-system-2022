@@ -24,9 +24,9 @@ struct Env {
 	u_int env_id;                   // Unique environment identifier
 	u_int env_parent_id;            // env_id of this env's parent
 	u_int env_status;  
-	u_int env_st;// Status of the environment
-	u_int env_ct;
-	u_int env_st1;
+	u_int env_s[3];// Status of the environment
+	u_int env_w;
+
 	Pde  *env_pgdir;                // Kernel virtual address of page dir
 	u_int env_cr3;
 	LIST_ENTRY(Env) env_sched_link;
