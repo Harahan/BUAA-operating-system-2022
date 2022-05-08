@@ -245,7 +245,8 @@ env_alloc(struct Env **new, u_int parent_id)
     e->env_parent_id = parent_id;
 
     /* Step 4: Focus on initializing the sp register and cp0_status of env_tf field, located at this new Env. */
-    e->env_tf.cp0_status = 0x10001004;
+    /*** exercise 4.0 ***/
+    e->env_tf.cp0_status = 0x1000100c; // KU -- 1 user mode -- 0 kernel mode
     e->env_tf.regs[29] = USTACKTOP;
 
     /* Step 5: Remove the new Env from env_free_list. */
