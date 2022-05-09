@@ -84,13 +84,14 @@ pgfault(u_int va)
 {
 	u_int *tmp = USTACKTOP;
     u_long perm = ((Pte*)(*vpt))[VPN(va)] & 0xfff;
+    va = ROUNDDOWN(va, BY2PG);
 	//	writef("fork.c:pgfault():\t va:%x\n",va);
     if ((perm & PTE_COW) == 0) user_panic("pgfault err: Cow not found");
 	//map the new page at a temporary place
     perm -= PTE_COW;
     syscall_mem_alloc(0, tmp, perm);
 	//copy the content
-    user_bcopy(ROUNDDOWN(va, BY2PG), tmp, BY2PG);
+    user_bcopy(va, tmp, BY2PG);
 	//map the page on the appropriate place
     syscall_mem_map(0, tmp, 0, va, perm);
 	//unmap the temporary place
