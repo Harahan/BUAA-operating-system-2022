@@ -49,7 +49,7 @@ void bzero(void *b, size_t len) {
 
 	// fill machine words while possible
 	while (b + 3 < max) {
-		*(int *)b = 0;
+		// *(int *)b = 0; /*TODO: ???*/
 		b += 4;
 	}
 
