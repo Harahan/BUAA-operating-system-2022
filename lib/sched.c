@@ -32,11 +32,15 @@ void sched_yield(void)
             }
         }
         while(1) {
-            if (!LIST_EMPTY(&env_sched_list[point]) && LIST_FIRST(&env_sched_list[point])->env_status == ENV_RUNNABLE) {
-                int c = LIST_FIRST(&env_sched_list[point])->env_pri;
-                count = (point == 0) ? c : (point == 1) ? c * 2 : c * 4;
-                env_run(LIST_FIRST(&env_sched_list[point]));
-                return;
+            if (!LIST_EMPTY(&env_sched_list[point])) {
+                LIST_FOREACH(nxt_env, &env_sched_list[point], env_sched_link) {
+                    if (nxt_env->env_status == ENV_RUNNABLE) {
+                        int c = nxt_env->env_pri;
+                        count = (point == 0) ? c : (point == 1) ? c * 2 : c * 4;
+                        env_run(nxt_env);
+                        return;
+                    }
+                }
             }
             point = (point + 1) % 3;
         }
