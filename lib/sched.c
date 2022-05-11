@@ -41,7 +41,7 @@ void sched_yield(void)
             point = (point + 1) % 3;
         }
     }
-
+    env_run(curenv);
     /*  hint:
      *  1. if (count==0), insert `e` into `env_sched_list[1-point]`
      *     using LIST_REMOVE and LIST_INSERT_TAIL.
