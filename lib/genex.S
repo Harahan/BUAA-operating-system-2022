@@ -84,6 +84,31 @@ END(do_reserved)
 
 .extern tlbra
 .set	noreorder
+
+NESTED(AdEL_handler, 0, sp)
+mfc0 k0, CP0_EPC
+lw k1, 0(k0)
+and k1, 0x8000000
+beq k1, zero, handle_lh
+nop
+        lw k1, 0(k0)
+and k1, 0xf7ffffff
+sw k1, 0(k0)
+j end_handler_adel
+handle_lh:
+nop
+        lw k1, 0(k0)
+and k1, 0x4000000
+beq k1, zero, end_handler_adel
+nop
+        lw k1, 0(k0)
+and k1, 0xfbffffff
+sw k1, 0(k0)
+end_handler_adel:
+jr ra
+nop
+END(AdEL_handler)
+
 NESTED(do_refill,0 , sp)
 //li	k1, '?'
 //sb	k1, 0x90000000
@@ -151,30 +176,6 @@ nop
         jr		ra
         nop
 END(do_refill)
-
-NESTED(AdEL_handler, 0, sp)
-mfc0 k0, CP0_EPC
-lw k1, 0(k0)
-and k1, 0x8000000
-beq k1, zero, handle_lh
-nop
-        lw k1, 0(k0)
-and k1, 0xf7ffffff
-sw k1, 0(k0)
-j end_handler_AdEL
-handle_lh:
-nop
-        lw k1, 0(k0)
-and k1, 0x4000000
-beq k1, zero, end_handler_AdEL
-nop
-        lw k1, 0(k0)
-and k1, 0xfbffffff
-sw k1, 0(k0)
-end_handler_AdEL:
-jr ra
-nop
-END(AdEL_handler)
 
 BUILD_HANDLER reserved do_reserved cli
 BUILD_HANDLER tlb	do_refill	cli
