@@ -45,32 +45,6 @@ FEXPORT(ret_from_exception)
 
 .set noreorder
 .align	5
-
-
-NESTED(handle_adel, 0, sp)
-mfc0 k0, CP0_EPC
-lw k1, 0(k0)
-and k1, 0x8000000
-beq k1, zero, handle_lh
-nop
-        lw k1, 0(k0)
-and k1, 0xf7ffffff
-sw k1, 0(k0)
-j end_handler_adel
-handle_lh:
-nop
-        lw k1, 0(k0)
-and k1, 0x4000000
-beq k1, zero, end_handler_adel
-nop
-        lw k1, 0(k0)
-and k1, 0xfbffffff
-sw k1, 0(k0)
-end_handler_adel:
-jr ra
-nop
-END(handle_adel)
-
 NESTED(handle_int, TF_SIZE, sp)
 .set	noat
 
@@ -178,7 +152,29 @@ nop
 			nop
 END(do_refill)
 
-
+NESTED(handle_adel, 0, sp)
+mfc0 k0, CP0_EPC
+lw k1, 0(k0)
+and k1, 0x8000000
+beq k1, zero, handle_lh
+nop
+        lw k1, 0(k0)
+and k1, 0xf7ffffff
+sw k1, 0(k0)
+j end_handler_adel
+handle_lh:
+nop
+        lw k1, 0(k0)
+and k1, 0x4000000
+beq k1, zero, end_handler_adel
+nop
+        lw k1, 0(k0)
+and k1, 0xfbffffff
+sw k1, 0(k0)
+end_handler_adel:
+jr ra
+nop
+END(handle_adel)
 
 BUILD_HANDLER reserved do_reserved cli
 BUILD_HANDLER tlb	do_refill	cli
