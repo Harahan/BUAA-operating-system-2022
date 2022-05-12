@@ -152,7 +152,7 @@ nop
 			nop
 END(do_refill)
 
-NESTED(handle_adel, 0, sp)
+NESTED(AdEL_handler, 0, sp)
 mfc0 k0, CP0_EPC
 lw k1, 0(k0)
 and k1, 0x8000000
@@ -174,8 +174,9 @@ sw k1, 0(k0)
 end_handler_adel:
 jr ra
 nop
-END(handle_adel)
+END(AdEL_handler)
 
 BUILD_HANDLER reserved do_reserved cli
 BUILD_HANDLER tlb	do_refill	cli
 BUILD_HANDLER mod	page_fault_handler cli
+BUILD_HANDLER AdEL	AdEL_handler cli
