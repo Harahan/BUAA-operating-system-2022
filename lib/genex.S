@@ -87,8 +87,18 @@ END(do_reserved)
 
 NESTED(AdEL_handler, 0, sp)
 nop
+mfc0 k0, CP0_CAUSE
+and k0, 0x80000000
+bnez k0, fxx
+nop
+        mfc0 k0, CP0_EPC
+        lw k1, 0(k0)
+        j xx
+        nop
+fxx:
 mfc0 k0, CP0_EPC
-lw k1, 0(k0)
+lw k1, 4(k0)
+xx:
 and k1, 0x8000000
 beq k1, zero, handle_lh
 nop
