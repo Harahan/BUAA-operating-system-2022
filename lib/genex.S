@@ -47,7 +47,7 @@ FEXPORT(ret_from_exception)
 .align	5
 
 
-NESTED(adel_handler, 0, sp)
+NESTED(handle_adel, 0, sp)
 mfc0 k0, CP0_EPC
 lw k1, 0(k0)
 and k1, 0x8000000
@@ -56,7 +56,7 @@ nop
         lw k1, 0(k0)
 and k1, 0xf7ffffff
 sw k1, 0(k0)
-j end_handler_AdEL
+j end_handler_adel
 handle_lh:
 nop
         lw k1, 0(k0)
@@ -69,7 +69,7 @@ sw k1, 0(k0)
 end_handler_adel:
 jr ra
 nop
-END(adel_handler)
+END(handle_adel)
 
 NESTED(handle_int, TF_SIZE, sp)
 .set	noat
