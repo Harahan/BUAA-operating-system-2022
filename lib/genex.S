@@ -107,6 +107,7 @@ sw k1, 0(k0)
 end_handler_adel:
 jr ra
 nop
+nop
 END(AdEL_handler)
 
 NESTED(do_refill,0 , sp)
