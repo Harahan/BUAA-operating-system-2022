@@ -86,6 +86,7 @@ END(do_reserved)
 .set	noreorder
 
 NESTED(AdEL_handler, 0, sp)
+nop
 mfc0 k0, CP0_EPC
 lw k1, 0(k0)
 and k1, 0x8000000
