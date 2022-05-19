@@ -346,7 +346,7 @@ void sys_ipc_recv(int sysno, u_int dstva)
                 page_insert(curenv->env_pgdir, p, dstva, curenv->env_ipc_perm);
             }
         }
-    }else{
+    }else {
         curenv->env_ipc_recving = 1;
         curenv->env_ipc_dstva = dstva;
         curenv->env_status = ENV_NOT_RUNNABLE;
