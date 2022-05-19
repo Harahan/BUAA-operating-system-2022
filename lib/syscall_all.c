@@ -342,7 +342,7 @@ void sys_panic(int sysno, char *msg)
  * ENV_NOT_RUNNABLE, giving up cpu.
  */
 
-int send(struct Env* e, u_int value, u_int id, u_int perm, u_int srcva) {
+int send(struct Env* e, u_int value, u_int id, u_int perm, u_int srcva, struct Env* f) {
     struct Page* p;
     int r;
     e->env_ipc_value = value;
@@ -352,7 +352,7 @@ int send(struct Env* e, u_int value, u_int id, u_int perm, u_int srcva) {
     e->env_status = ENV_RUNNABLE;
     if (srcva != 0) {
         Pte *pte;
-        p = page_lookup(curenv->env_pgdir, srcva, &pte);
+        p = page_lookup(f->env_pgdir, srcva, &pte);
         if (p == NULL) return -E_INVAL;
         if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
     }
@@ -385,10 +385,11 @@ void sys_ipc_recv(int sysno, u_int dstva)
     int i = 0;
     for (; i < ie; i++) {
         if (env_save_list[i].v == 1 && env_save_list[i].recv_id == curenv->env_id) {
+            curenv->env_ipc_recving = 0;
             save tmp = env_save_list[i];
-            send(curenv, tmp.val, tmp.send_id, tmp.perm, tmp.srcva);
-            tmp.v = 0;
             envid2env(tmp.send_id, &e, 0);
+            send(curenv, tmp.val, tmp.send_id, tmp.perm, tmp.srcva, e);
+            tmp.v = 0;
             e->env_status = ENV_RUNNABLE;
             sys_yield();
         }
@@ -435,7 +436,7 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva,
         e->env_status = ENV_NOT_RUNNABLE;
         sys_yield();
     } else {
-        return send(e, value, curenv->env_id, perm, srcva);
+        return send(e, value, curenv->env_id, perm, srcva, curenv);
     }
 
 
