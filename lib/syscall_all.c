@@ -383,18 +383,24 @@ void sys_ipc_recv(int sysno, u_int dstva)
     //curenv->env_status = ENV_NOT_RUNNABLE;
     //sys_yield();
     int i = 0;
+    /*printf("..............................\n");
     for (; i < ie; i++) {
+        printf("\n[ %x -> %x]\n", env_save_list[i].send_id, env_save_list[i].recv_id, env_save_list[i].v);
+    }
+    printf("...............................\n");*/
+    for (i = 0; i < ie; i++) {
         if (env_save_list[i].v == 1 && env_save_list[i].recv_id == curenv->env_id) {
             curenv->env_ipc_recving = 0;
             save tmp = env_save_list[i];
             envid2env(tmp.send_id, &e, 0);
+            //printf("\n[ %x -> %x]\n", env_save_list[i].send_id, env_save_list[i].recv_id);
             send(curenv, tmp.val, tmp.send_id, tmp.perm, tmp.srcva, e);
             tmp.v = 0;
             e->env_status = ENV_RUNNABLE;
             sys_yield();
         }
     }
-    curenv->env_status = ENV_NOT_RUNNABLE;
+    // curenv->env_status = ENV_NOT_RUNNABLE;
     sys_yield();
 }
 
@@ -427,16 +433,16 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva,
     if (srcva >= UTOP) return -E_INVAL;
     if ((r = envid2env(envid, &e, 0)) < 0) return r;
     if (e->env_ipc_recving == 0) {
-        env_save_list[ie++].recv_id = envid;
+        env_save_list[ie].recv_id = envid;
         env_save_list[ie].v = 1;
         env_save_list[ie].send_id = curenv->env_id;
         env_save_list[ie].perm = perm;
         env_save_list[ie].srcva = srcva;
-        env_save_list[ie].val = value;
-        e->env_status = ENV_NOT_RUNNABLE;
+        env_save_list[ie++].val = value;
+        curenv->env_status = ENV_NOT_RUNNABLE;
         sys_yield();
     } else {
-        return send(e, value, curenv->env_id, perm, srcva, curenv);
+        send(e, value, curenv->env_id, perm, srcva, curenv);
     }
 
 
