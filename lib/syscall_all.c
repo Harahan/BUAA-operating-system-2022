@@ -397,10 +397,10 @@ void sys_ipc_recv(int sysno, u_int dstva)
             send(curenv, tmp.val, tmp.send_id, tmp.perm, tmp.srcva, e);
             tmp.v = 0;
             e->env_status = ENV_RUNNABLE;
-            sys_yield();
+            //sys_yield();
         }
     }
-    // curenv->env_status = ENV_NOT_RUNNABLE;
+    curenv->env_status = ENV_NOT_RUNNABLE;
     sys_yield();
 }
 
