@@ -341,12 +341,58 @@ void sys_panic(int sysno, char *msg)
  * 	This syscall will set the current process's status to
  * ENV_NOT_RUNNABLE, giving up cpu.
  */
+
+int send(struct Env* e, u_int value, u_int id, u_int perm, u_int srcva) {
+    struct Page* p;
+    int r;
+    e->env_ipc_value = value;
+    e->env_ipc_from = id;
+    e->env_ipc_perm = perm;
+    e->env_ipc_recving = 0;
+    e->env_status = ENV_RUNNABLE;
+    if (srcva != 0) {
+        Pte *pte;
+        p = page_lookup(curenv->env_pgdir, srcva, &pte);
+        if (p == NULL) return -E_INVAL;
+        if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
+    }
+}
+
+typedef struct save {
+    u_int recv_id;
+    u_int v;
+
+    u_int send_id;
+    u_int perm;
+    u_int srcva;
+    u_int val;
+}save;
+
+save env_save_list[2000];
+int ie = 0;
+
+
 /*** exercise 4.7 ***/
 void sys_ipc_recv(int sysno, u_int dstva)
 {
+    int r;
+    struct Env *e;
     if (dstva >= UTOP) return;
     curenv->env_ipc_recving = 1;
     curenv->env_ipc_dstva = dstva;
+    //curenv->env_status = ENV_NOT_RUNNABLE;
+    //sys_yield();
+    int i = 0;
+    for (; i < ie; i++) {
+        if (env_save_list[i].v == 1 && env_save_list[i].recv_id == curenv->env_id) {
+            save tmp = env_save_list[i];
+            send(curenv, tmp.val, tmp.send_id, tmp.perm, tmp.srcva);
+            tmp.v = 0;
+            envid2env(tmp.send_id, &e, 0);
+            e->env_status = ENV_RUNNABLE;
+            sys_yield();
+        }
+    }
     curenv->env_status = ENV_NOT_RUNNABLE;
     sys_yield();
 }
@@ -379,18 +425,21 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva,
 
     if (srcva >= UTOP) return -E_INVAL;
     if ((r = envid2env(envid, &e, 0)) < 0) return r;
-    if (e->env_ipc_recving == 0) return -E_IPC_NOT_RECV;
-    e->env_ipc_value = value;
-    e->env_ipc_from = curenv->env_id;
-    e->env_ipc_perm = perm;
-    e->env_ipc_recving = 0;
-    e->env_status = ENV_RUNNABLE;
-    if (srcva != 0) {
-        Pte *pte;
-        p = page_lookup(curenv->env_pgdir, srcva, &pte);
-        if (p == NULL) return -E_INVAL;
-        if ((r = page_insert(e->env_pgdir, p, e->env_ipc_dstva, perm)) < 0) return r;
+    if (e->env_ipc_recving == 0) {
+        env_save_list[ie++].recv_id = envid;
+        env_save_list[ie].v = 1;
+        env_save_list[ie].send_id = curenv->env_id;
+        env_save_list[ie].perm = perm;
+        env_save_list[ie].srcva = srcva;
+        env_save_list[ie].val = value;
+        e->env_status = ENV_NOT_RUNNABLE;
+        sys_yield();
+    } else {
+        return send(e, value, curenv->env_id, perm, srcva);
     }
+
+
 
 	return 0;
 }
+
