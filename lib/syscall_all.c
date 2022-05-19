@@ -339,7 +339,7 @@ void sys_ipc_recv(int sysno, u_int dstva)
         curenv->env_ipc_perm = e->env_nop;
         e->env_status = ENV_RUNNABLE;
         struct Page *p;
-        if (e->env_ipc_recving != 0) {
+        if (e->env_parent_id!= 0) {
             Pte *pte;
             p = page_lookup(e->env_pgdir, e->env_parent_id, &pte);
             if (p != NULL) {
