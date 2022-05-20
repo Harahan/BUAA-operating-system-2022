@@ -66,6 +66,11 @@ int syscall_ipc_can_send(u_int envid, u_int value, u_int srcva, u_int perm);
 void syscall_ipc_recv(u_int dstva);
 int syscall_cgetc();
 
+/*** exercise 5.5 ***/
+int syscall_write_dev(u_int va, u_int dev, u_int offset);
+
+int syscall_read_dev(u_int va, u_int dev, u_int offset);
+
 // string.c
 int strlen(const char *s);
 char *strcpy(char *dst, const char *src);
