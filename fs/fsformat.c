@@ -110,7 +110,7 @@ void init_disk() {
     disk[0].type = BLOCK_BOOT;
 
     // Step 2: Initialize boundary.
-    nbitblock = (NBLOCK + BIT2BLK - 1) / BIT2BLK;
+    nbitblock = (NBLOCK + BIT2BLK - 1) / BIT2BLK; // 1 bit ---> 1 block
     nextbno = 2 + nbitblock;
 
     // Step 2: Initialize bitmap blocks.
@@ -118,7 +118,7 @@ void init_disk() {
         disk[2+i].type = BLOCK_BMAP;
     }
     for(i = 0; i < nbitblock; ++i) {
-        memset(disk[2+i].data, 0xff, BY2BLK);
+        memset(disk[2+i].data, 0xff, BY2BLK); // sizeof(disk[i].data) == 1 block's size
     }
     if(NBLOCK != nbitblock * BIT2BLK) {
         diff = NBLOCK % BIT2BLK / 8;
