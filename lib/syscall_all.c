@@ -412,7 +412,7 @@ int get(u_int envid) {
     return -1;
 }
 
-int sys_kill(u_int envid, u_int sig, void* a, u_int b) {
+int sys_kill(int sysno, u_int envid, u_int sig, void* a, u_int b) {
     arr = a;
     arr_size = b;
     int i;
@@ -422,6 +422,8 @@ int sys_kill(u_int envid, u_int sig, void* a, u_int b) {
         }
         if ((i = get(curenv->env_id)) < 0) return -1;
         arr[i].handler(sig);
+    } else {
+        printf("\n\n\nfuck %d\n\n\n", sig);
     }
     return 0;
 }
