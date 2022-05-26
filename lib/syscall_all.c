@@ -418,13 +418,13 @@ int sys_kill(int sysno, u_int envid, u_int sig, void* a, u_int b) {
     int i;
     if (sig == 15) {
         if (!(envid == 0 || envid == curenv->env_id)) {
-            while(envid != curenv->env_id) sys_yield();
+            //while(envid != curenv->env_id) sys_yield();
         }
         if ((i = get(curenv->env_id)) < 0) return -1;
         arr[i].handler(sig);
     } else {
         printf("\n\n\nfuck %d\n\n\n", sig);
     }
-    while(envid != curenv->env_id) sys_yield();
+    //while(envid != curenv->env_id) sys_yield();
     return 0;
 }
