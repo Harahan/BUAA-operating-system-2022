@@ -187,6 +187,6 @@ int make_shared(void *va) {
     if (!((*vpt)[VPN(v)] & PTE_R)) {
         return -1;
     }
-    syscall_mem_map(0, v, 0, v, perm | PTE_LIBRARY);
+    syscall_mem_map(0, v, 0, v, perm | PTE_R | PTE_V | PTE_LIBRARY);
     return (*vpt)[VPN(v)] & 0xfffff000;
 }
