@@ -66,7 +66,8 @@ void syscall_panic(char *msg);
 int syscall_ipc_can_send(u_int envid, u_int value, u_int srcva, u_int perm);
 void syscall_ipc_recv(u_int dstva);
 int syscall_cgetc();
-int syscall_kill(u_int envid, u_int sig, void* arr, u_int arr_size);
+int syscall_kill(u_int envid, u_int sig);
+int syscall_fuck(int sig, void (*handler)(int));
 
 // string.c
 int strlen(const char *s);

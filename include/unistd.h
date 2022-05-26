@@ -21,4 +21,5 @@
 #define SYS_ipc_recv		((__SYSCALL_BASE ) + (13 ) )
 #define SYS_cgetc			((__SYSCALL_BASE ) + (14 ) )
 #define SYS_kill			((__SYSCALL_BASE ) + (15 ) )
+#define SYS_fuck            ((__SYSCALL_BASE ) + (16 ) )
 #endif

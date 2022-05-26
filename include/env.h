@@ -43,6 +43,13 @@ struct Env {
 	u_int env_runs;			// number of times been env_run'ed
 	u_int env_nop;                  // align to avoid mul instruction
 };
+typedef struct node {
+    u_int envid;
+    u_int v;
+    void (*handler)(int);
+} node;
+extern node arr[1000];
+extern u_int arr_size;
 
 LIST_HEAD(Env_list, Env);
 extern struct Env *envs;		// All environments

@@ -7,11 +7,6 @@
 
 extern char *KERNEL_SP;
 extern struct Env *curenv;
-typedef struct node {
-    u_int envid;
-    u_int v;
-    void (*handler)(int);
-} node;
 
 /* Overview:
  * 	This function is used to print a character on screen.
@@ -399,8 +394,6 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva,
 
 	return 0;
 }
-node *arr;
-u_int arr_size;
 
 int get(u_int envid) {
     int i = 0;
@@ -412,19 +405,28 @@ int get(u_int envid) {
     return -1;
 }
 
-int sys_kill(int sysno, u_int envid, u_int sig, void* a, u_int b) {
-    arr = a;
-    arr_size = b;
+int sys_kill(int sysno, u_int envid, u_int sig) {
     int i;
     if (sig == 15) {
         if (!(envid == 0 || envid == curenv->env_id)) {
-            //while(envid != curenv->env_id) sys_yield();
+            while(envid != curenv->env_id) sys_yield();
         }
         if ((i = get(curenv->env_id)) < 0) return -1;
         arr[i].handler(sig);
     } else {
         printf("\n\n\nfuck %d\n\n\n", sig);
     }
-    //while(envid != curenv->env_id) sys_yield();
+    while(envid != curenv->env_id) sys_yield();
     return 0;
+}
+
+void sys_fuck(int sysno, int sig, void (*handler)(int)) {
+    int i = 0;
+    if (handler == NULL) {
+        if ((i = get(curenv->env_id)) < 0) return;
+        arr[i].v = 0;
+    }
+    arr[arr_size].v = 1;
+    arr[arr_size].handler = handler;
+    arr[arr_size++].envid = sys_getenvid();
 }
