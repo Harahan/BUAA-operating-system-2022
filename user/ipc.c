@@ -5,6 +5,13 @@
 #include <env.h>
 
 extern struct Env *env;
+typedef struct node {
+    u_int envid;
+    u_int v;
+    void (*handler)(int);
+} node;
+node arr[1000];
+u_int arr_size;
 
 // Send val to whom.  This function keeps trying until
 // it succeeds.  It should panic() on any error other than
@@ -47,5 +54,31 @@ ipc_recv(u_int *whom, u_int dstva, u_int *perm)
 	}
 
 	return env->env_ipc_value;
+}
+
+void kill(u_int envid, int sig) {
+    int i = syscall_kill(envid, sig, arr, arr_size);
+    if (i < 0) exit();
+}
+
+static int get() {
+    int i = 0;
+    for (; i < arr_size; i++) {
+        if (arr[i].envid == syscall_getenvid() && arr[i].v == 1) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void signal(int sig, void (*handler)(int)) {
+    int i = 0;
+    if (handler == NULL) {
+        if ((i = get()) < 0) return;
+        arr[i].v = 0;
+    }
+    arr[arr_size].v = 1;
+    arr[arr_size].handler = handler;
+    arr[arr_size++].envid = syscall_getenvid();
 }
 

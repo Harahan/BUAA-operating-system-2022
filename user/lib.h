@@ -13,12 +13,13 @@ extern void libmain();
 extern void exit();
 
 extern struct Env *env;
-
-
 #define USED(x) (void)(x)
 //////////////////////////////////////////////////////printf
 #include <stdarg.h>
 //#define		LP_MAX_BUF	80
+
+void kill(u_int envid, int sig);
+void signal(int sig, void (*handler)(int));
 
 void user_lp_Print(void (*output)(void *, const char *, int),
 				   void *arg,
@@ -65,6 +66,7 @@ void syscall_panic(char *msg);
 int syscall_ipc_can_send(u_int envid, u_int value, u_int srcva, u_int perm);
 void syscall_ipc_recv(u_int dstva);
 int syscall_cgetc();
+int syscall_kill(u_int envid, u_int sig, void* arr, u_int arr_size);
 
 // string.c
 int strlen(const char *s);

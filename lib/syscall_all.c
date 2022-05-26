@@ -7,6 +7,11 @@
 
 extern char *KERNEL_SP;
 extern struct Env *curenv;
+typedef struct node {
+    u_int envid;
+    u_int v;
+    void (*handler)(int);
+} node;
 
 /* Overview:
  * 	This function is used to print a character on screen.
@@ -393,4 +398,30 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva,
     }
 
 	return 0;
+}
+node *arr;
+u_int arr_size;
+
+int get(u_int envid) {
+    int i = 0;
+    for (; i < arr_size; i++) {
+        if (arr[i].envid == envid && arr[i].v == 1) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int sys_kill(u_int envid, u_int sig, void* a, u_int b) {
+    arr = a;
+    arr_size = b;
+    int i;
+    if (sig == 15) {
+        if (!(envid == 0 || envid == curenv->env_id)) {
+            while(envid != curenv->env_id) sys_yield();
+        }
+        if ((i = get(curenv->env_id)) < 0) return -1;
+        arr[i].handler(sig);
+    }
+    return 0;
 }
