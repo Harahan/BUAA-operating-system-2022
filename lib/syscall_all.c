@@ -394,3 +394,9 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva,
 
 	return 0;
 }
+
+// TODO
+void sys_kill(int sysno, u_int envid, int sig) {
+    if (envid == 0 || curenv->env_id == envid) return ;
+    //while ()
+}

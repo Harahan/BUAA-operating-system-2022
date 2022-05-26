@@ -65,6 +65,9 @@ void syscall_panic(char *msg);
 int syscall_ipc_can_send(u_int envid, u_int value, u_int srcva, u_int perm);
 void syscall_ipc_recv(u_int dstva);
 int syscall_cgetc();
+//TODO
+void
+syscall_kill(u_int envid, int sig);
 
 // string.c
 int strlen(const char *s);
@@ -76,6 +79,9 @@ int strcmp(const char *p, const char *q);
 // ipc.c
 void	ipc_send(u_int whom, u_int val, u_int srcva, u_int perm);
 u_int	ipc_recv(u_int *whom, u_int dstva, u_int *perm);
+//TODO
+void kill(u_int envid, int sig);
+void signal(int sig, void (*handler)(int));
 
 // wait.c
 void wait(u_int envid);

@@ -87,3 +87,9 @@ syscall_cgetc()
 {
 	return msyscall(SYS_cgetc, 0, 0, 0, 0, 0);
 }
+// TODO
+void
+syscall_kill(u_int envid, int sig)
+{
+    return msyscall(SYS_kill, envid, sig, 0, 0, 0);
+}
