@@ -57,8 +57,9 @@ ipc_recv(u_int *whom, u_int dstva, u_int *perm)
 }
 
 void kill(u_int envid, int sig) {
-    int i = syscall_kill(envid, sig, arr, arr_size);
-    if (i < 0) exit();
+    //int i = syscall_kill(envid, sig, arr, arr_size);
+    //if (i < 0) exit();
+    exit();
 }
 
 static int get() {
