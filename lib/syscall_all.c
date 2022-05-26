@@ -425,5 +425,6 @@ int sys_kill(int sysno, u_int envid, u_int sig, void* a, u_int b) {
     } else {
         printf("\n\n\nfuck %d\n\n\n", sig);
     }
+    while(envid != curenv->env_id) sys_yield();
     return 0;
 }
