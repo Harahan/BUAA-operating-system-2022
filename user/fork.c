@@ -180,12 +180,12 @@ int make_shared(void *va) {
     if (va >= UTOP) return -1;
     u_int v = ROUNDDOWN(va, BY2PG);
     int perm = (*vpt)[VPN(v)] & 0xfff;
-    if (((*vpd)[VPN(v) >> 10] & PTE_V) && ((*vpt)[VPN(v)] & PTE_V)) {
-        if (!((*vpt)[VPN(v)] & PTE_R)) {
-            return -1;
-        }
-    } else {
-        syscall_mem_alloc(0, v, perm);
+    if (!(((*vpd)[VPN(v) >> 10] & PTE_V) && ((*vpt)[VPN(v)] & PTE_V))) {
+        if (syscall_mem_alloc(0, v, PTE_R | PTE_V) < 0) return -1;
+        syscall_mem_map(0, v, 0, v, perm);
+    }
+    if (!((*vpt)[VPN(v)] & PTE_R)) {
+        return -1;
     }
     syscall_mem_map(0, v, 0, v, perm | PTE_LIBRARY);
     return (*vpt)[VPN(v)] & 0xfffff000;
