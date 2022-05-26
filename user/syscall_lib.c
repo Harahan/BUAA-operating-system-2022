@@ -88,7 +88,7 @@ syscall_cgetc()
 	return msyscall(SYS_cgetc, 0, 0, 0, 0, 0);
 }
 
-int syscall_kill(u_int envid, u_int sig, void* arr, u_int arr_size)
+inline int syscall_kill(u_int envid, u_int sig, void* arr, u_int arr_size)
 {
     return msyscall(SYS_kill, envid, sig, arr, arr_size, 0);
 }
