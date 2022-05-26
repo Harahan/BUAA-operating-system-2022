@@ -429,4 +429,5 @@ void sys_fuck(int sysno, int sig, void (*handler)(int)) {
     arr[arr_size].v = 1;
     arr[arr_size].handler = handler;
     arr[arr_size++].envid = sys_getenvid();
+
 }
