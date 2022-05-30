@@ -418,7 +418,7 @@ void sys_send_sig(int sysno, u_int envid, int sig) {
     }
     int handler = handlers[get_handler(envid, sig)], restore_addr = restore_addrs[ENVX(envid)];
     if (handler == 0) {
-        if (sig == 1 || sig == 15) env_destroy(e);
+        if (sig == 11 || sig == 15) env_destroy(e);
         else return;
     }
     memcpy(tfs + ENVX(envid), old, sizeof(struct Trapframe));
@@ -441,7 +441,7 @@ void sys_set_restore_addr(int sysno, u_int envid, int addr) {
     restore_addrs[ENVX(envid)] = addr;
 }
 
-void sys_copy_handler(u_int envid, u_int penvid) {
+void sys_copy_handler(int sysno, u_int envid, u_int penvid) {
     if (envid == 0) envid = curenv->env_id;
     int i, j;
     i = get_handler(envid, 11), j = get_handler(penvid, 11);
