@@ -30,3 +30,11 @@ NOFOUND:
 	j	ra
 	nop
 END(tlb_out)
+
+// TODO: lab4-2-Extra
+LEAF(set_sp)
+nop
+        addu sp, a0, zero
+        jr ra
+        nop
+END(set_sp)

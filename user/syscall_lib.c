@@ -87,9 +87,32 @@ syscall_cgetc()
 {
 	return msyscall(SYS_cgetc, 0, 0, 0, 0, 0);
 }
-// TODO
+// TODO: lab4-2-Extra
 void
-syscall_kill(u_int envid, int sig)
+syscall_send_sig(u_int envid, int sig)
 {
-    return msyscall(SYS_kill, envid, sig, 0, 0, 0);
+    msyscall(SYS_send_sig, envid, sig, 0, 0, 0);
+}
+
+void
+syscall_set_sig_handler(int sig, int handler)
+{
+    msyscall(SYS_set_sig_handler, sig, handler, 0, 0, 0);
+}
+
+void
+syscall_restore()
+{
+    msyscall(SYS_restore, 0, 0, 0, 0, 0);
+}
+
+void
+syscall_set_restore_addr(u_int envid, int addr)
+{
+    msyscall(SYS_set_restore_addr, envid, addr, 0, 0, 0);
+}
+void
+syscall_copy_handler(u_int envid, u_int penvid)
+{
+    msyscall(SYS_copy_handler, envid, penvid, 0, 0, 0);
 }

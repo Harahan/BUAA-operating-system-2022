@@ -19,6 +19,7 @@ CFLAGS += -nostdlib -static
 
 all: tltest.x tltest.b \
 	fktest.x fktest.b pingpong.x pingpong.b idle.x \
+	 sigtest.x sigtest.b \
 	$(USERLIB) entry.o syscall_wrap.o
 
 %.x: %.b.c

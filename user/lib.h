@@ -65,9 +65,12 @@ void syscall_panic(char *msg);
 int syscall_ipc_can_send(u_int envid, u_int value, u_int srcva, u_int perm);
 void syscall_ipc_recv(u_int dstva);
 int syscall_cgetc();
-//TODO
-void
-syscall_kill(u_int envid, int sig);
+// TODO: lab4-2-Extra
+void syscall_send_sig(u_int envid, int sig);
+void syscall_set_sig_handler(int sig, int handler);
+void syscall_restore();
+void syscall_set_restore_addr(u_int envid, int addr);
+void syscall_copy_handler(u_int envid, u_int penvid);
 
 // string.c
 int strlen(const char *s);
@@ -79,9 +82,10 @@ int strcmp(const char *p, const char *q);
 // ipc.c
 void	ipc_send(u_int whom, u_int val, u_int srcva, u_int perm);
 u_int	ipc_recv(u_int *whom, u_int dstva, u_int *perm);
-//TODO
+// TODO: lab4-2-Extra
 void kill(u_int envid, int sig);
 void signal(int sig, void (*handler)(int));
+void restore();
 
 // wait.c
 void wait(u_int envid);

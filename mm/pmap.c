@@ -4,7 +4,6 @@
 #include "env.h"
 #include "error.h"
 
-
 /* These variables are set by mips_detect_memory() */
 u_long maxpa;            /* Maximum physical address */
 u_long npage;            /* Amount of memory(in pages) */
@@ -649,6 +648,8 @@ void page_check(void)
 
 	printf("page_check() succeeded!\n");
 }
+// TODO: lab4-2-Extra
+extern char *KERNEL_SP;
 
 void pageout(int va, int context)
 {
@@ -662,8 +663,11 @@ void pageout(int va, int context)
 	if ((va > 0x7f400000) && (va < 0x7f800000)) {
 		panic(">>>>>>>>>>>>>>>>>>>>>>it's env's zone");
 	}
-
+    // TODO: lab4-2-Extra
 	if (va < 0x10000) {
+        sys_send_sig(0, 0, 11);
+        set_sp(KERNEL_SP - sizeof(struct Trapframe));
+        ret_from_exception();
 		panic("^^^^^^TOO LOW^^^^^^^^^");
 	}
 

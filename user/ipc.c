@@ -49,23 +49,15 @@ ipc_recv(u_int *whom, u_int dstva, u_int *perm)
 	return env->env_ipc_value;
 }
 
-// TODO
-void(*signal_handlers[3])(int);
-
+// TODO: lab4-2-Extra
 void kill(u_int envid, int sig) {
-    int i = (sig == 15) ? 0 : (sig == 11) ? 1 : 2;
-    if (syscall_getenvid() == envid || envid == 0) {
-        if (signal_handlers[i] != NULL) signal_handlers[i](sig);
-        if (i != 2) exit();
-    } else syscall_kill(envid, sig);
+    syscall_send_sig(envid, sig);
 }
 
 void signal(int sig, void (*handler)(int)) {
-    if (sig == 15) {
-        signal_handlers[0] = handler;
-    } else if (sig == 11) {
-        signal_handlers[1] = handler;
-    } else {
-        signal_handlers[2] = handler;
-    }
+    syscall_set_sig_handler(sig, (int) handler);
+}
+
+void restore() {
+    syscall_restore();
 }

@@ -20,6 +20,10 @@
 #define SYS_ipc_can_send		((__SYSCALL_BASE ) + (12 ) )
 #define SYS_ipc_recv		((__SYSCALL_BASE ) + (13 ) )
 #define SYS_cgetc			((__SYSCALL_BASE ) + (14 ) )
-// TODO
-#define SYS_kill			((__SYSCALL_BASE ) + (15 ) )
+// TODO: lab4-2-Extra
+#define SYS_send_sig        ((__SYSCALL_BASE ) + (15 ) )
+#define SYS_set_sig_handler  ((__SYSCALL_BASE ) + (16 ) )
+#define SYS_restore          ((__SYSCALL_BASE ) + (17 ) )
+#define SYS_set_restore_addr ((__SYSCALL_BASE ) + (18 ) )
+#define SYS_copy_handler     ((__SYSCALL_BASE ) + (19 ) )
 #endif

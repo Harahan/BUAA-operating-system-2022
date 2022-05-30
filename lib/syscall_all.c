@@ -395,8 +395,59 @@ int sys_ipc_can_send(int sysno, u_int envid, u_int value, u_int srcva,
 	return 0;
 }
 
-// TODO
-void sys_kill(int sysno, u_int envid, int sig) {
-    if (envid == 0 || curenv->env_id == envid) return ;
-    //while ()
+// TODO: lab4-2-Extra
+int handlers[3 * NENV], restore_addrs[NENV];
+struct Trapframe tfs[NENV];
+
+int get_handler(u_int envid, int sig) {
+    int index = ENVX(envid) * 3;
+    return (sig == 11) ? index : (sig == 15) ? index + 1 : index + 2;
+}
+
+void sys_send_sig(int sysno, u_int envid, int sig) {
+    struct Trapframe *old;
+    struct Env* e;
+    int r;
+    if (envid == 0 || envid == curenv->env_id) {
+        envid = curenv->env_id;
+        old = (struct Trapframe*) (KERNEL_SP - sizeof(struct Trapframe));
+        e = curenv;
+    } else {
+        if ((r = envid2env(envid, &e, 0)) < 0) return;
+        old = &(e->env_tf);
+    }
+    int handler = handlers[get_handler(envid, sig)], restore_addr = restore_addrs[ENVX(envid)];
+    if (handler == 0) {
+        if (sig == 1 || sig == 15) env_destroy(e);
+        else return;
+    }
+    memcpy(tfs + ENVX(envid), old, sizeof(struct Trapframe));
+    old->regs[4] = sig; // a0
+    old->regs[31] = restore_addr; // ra
+    if (envid == curenv->env_id) old->cp0_epc = handler; // epc
+    else old->pc = handler; // pc
+}
+
+int sys_set_sig_handler(int sysno, int sig, int handler) {
+    handlers[get_handler(curenv->env_id, sig)] = handler;
+}
+
+void sys_restore(int sysno) {
+    bcopy(tfs + ENVX(curenv->env_id), KERNEL_SP - sizeof(struct Trapframe), sizeof(struct Trapframe));
+}
+
+void sys_set_restore_addr(int sysno, u_int envid, int addr) {
+    if (envid == 0) envid = curenv->env_id;
+    restore_addrs[ENVX(envid)] = addr;
+}
+
+void sys_copy_handler(u_int envid, u_int penvid) {
+    if (envid == 0) envid = curenv->env_id;
+    int i, j;
+    i = get_handler(envid, 11), j = get_handler(penvid, 11);
+    memcpy(handlers + i, handlers + j, sizeof(int));
+    i = get_handler(envid, 15), j = get_handler(penvid, 15);
+    memcpy(handlers + i, handlers + j, sizeof(int));
+    i = get_handler(envid, 18), j = get_handler(penvid, 18);
+    memcpy(handlers + i, handlers + j, sizeof(int));
 }
