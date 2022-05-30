@@ -78,3 +78,9 @@ sys_call_table:                         // Syscall Table
     .word sys_ipc_can_send
     .word sys_ipc_recv
     .word sys_cgetc
+    // TODO: lab4-2-Extra
+    .word sys_send_sig
+    .word sys_set_sig_handler
+    .word sys_restore
+    .word sys_set_restore_addr
+    .word sys_copy_handler
