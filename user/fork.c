@@ -165,7 +165,7 @@ fork(void)
     syscall_set_pgfault_handler(newenvid, __asm_pgfault_handler, UXSTACKTOP);
     syscall_set_env_status(newenvid, ENV_RUNNABLE);
     // TODO: lab4-2-Extra
-    syscall_copy_handler(0, newenvid);
+    syscall_copy_handler(newenvid, syscall_getenvid());
     syscall_set_restore_addr(newenvid, (int)restore);
 	return newenvid;
 }
