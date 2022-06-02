@@ -1,0 +1,165 @@
+[33m[01m[05m[ You are changing the branch: lab6 ][0m
+Autotest: Begin at Fri Jun  3 01:17:00 CST 2022
+Beginning test part1
+
+
+Begin build at Fri Jun  3 01:17:01 CST 2022
+Cleanning the project.................
+
+for d in boot drivers init lib mm user fs;	\
+	do					\
+		make --directory=$d clean; \
+	done; \
+rm -rf *.o *~ gxemul/vmlinux
+make[1]: Entering directory '/usr/src/workdir/boot'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make[1]: Entering directory '/usr/src/workdir/drivers'
+for d in gxconsole; \
+	do				\
+		make --directory=$d clean; \
+	done
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+rm -rf *.o *~
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make[1]: Entering directory '/usr/src/workdir/init'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/init'
+make[1]: Entering directory '/usr/src/workdir/lib'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/lib'
+make[1]: Entering directory '/usr/src/workdir/mm'
+rm -rf *~ *.o
+make[1]: Leaving directory '/usr/src/workdir/mm'
+make[1]: Entering directory '/usr/src/workdir/user'
+rm -rf *~ *.o *.b.c *.x *.b
+make[1]: Leaving directory '/usr/src/workdir/user'
+make[1]: Entering directory '/usr/src/workdir/fs'
+rm -rf *~ *.o *.b.c *.b *.x
+make[1]: Leaving directory '/usr/src/workdir/fs'
+
+Building the project..................
+
+make --directory=boot
+make[1]: Entering directory '/usr/src/workdir/boot'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include/ -c start.S 
+make[1]: Leaving directory '/usr/src/workdir/boot'
+make --directory=drivers
+make[1]: Entering directory '/usr/src/workdir/drivers'
+make --directory=gxconsole
+make[2]: Entering directory '/usr/src/workdir/drivers/gxconsole'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000   -c -o console.o console.c
+make[2]: Leaving directory '/usr/src/workdir/drivers/gxconsole'
+make[1]: Leaving directory '/usr/src/workdir/drivers'
+make --directory=init
+make[1]: Entering directory '/usr/src/workdir/init'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c init.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c main.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I../include -c code.c
+make[1]: Leaving directory '/usr/src/workdir/init'
+make --directory=lib
+make[1]: Entering directory '/usr/src/workdir/lib'
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c kernel_elfloader.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c env.c
+env.c: In function 'env_run':
+env.c:476: warning: passing argument 1 of 'lcontext' makes integer from pointer without a cast
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c print.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c printf.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c sched.c
+sched.c: In function 'sched_yield':
+sched.c:21: warning: 'nxt_env' may be used uninitialized in this function
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c env_asm.S
+env_asm.S: Assembler messages:
+env_asm.S:62: Warning: Used $at without ".set noat"
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c kclock.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c traps.c
+/OSLAB/compiler/usr/bin/mips_4KC-gcc -O -G 0 -mno-abicalls -fno-builtin -Wa,-xgot -Wall -fPIC -march=r3000 -I./ -I../ -I../include/ -c genex.S
+../include/stackframe.h: Assembler messages:
+../include/stackframe.h:6: Error: unknown pseudo-op: `.'
+../include/stackframe.h:7: Error: unrecognized opcode `macro STI'
+../include/stackframe.h:9: Error: missing ')'
+../include/stackframe.h:9: Error: missing ')'
+../include/stackframe.h:9: Error: missing ')'
+../include/stackframe.h:10: Error: junk at end of line, first unrecognized character is `|'
+../include/stackframe.h:14: Warning: .endm encountered without preceeding .macro
+../include/stackframe.h:17: Error: unknown pseudo-op: `.'
+../include/stackframe.h:18: Error: unrecognized opcode `macro CLI'
+../include/stackframe.h:20: Error: missing ')'
+../include/stackframe.h:20: Error: missing ')'
+../include/stackframe.h:20: Error: missing ')'
+../include/stackframe.h:21: Error: junk at end of line, first unrecognized character is `|'
+../include/stackframe.h:23: Error: absolute expression required `xor'
+../include/stackframe.h:24: Error: junk at end of line, first unrecognized character is `0'
+../include/stackframe.h:26: Warning: .endm encountered without preceeding .macro
+../include/stackframe.h:28: Error: unknown pseudo-op: `.'
+../include/stackframe.h:29: Error: unrecognized opcode `macro SAVE_ALL'
+../include/stackframe.h:32: Error: Instruction sll requires absolute expression
+../include/stackframe.h:33: Error: junk at end of line, first unrecognized character is `3'
+../include/stackframe.h:35: Error: junk at end of line, first unrecognized character is `1'
+../include/stackframe.h:45: Error: unrecognized opcode `get_sp'
+../include/stackframe.h:46: Error: illegal operands `move'
+../include/stackframe.h:47: Error: unrecognized opcode `$27,'
+../include/stackframe.h:48: Error: unrecognized opcode `$29'
+../include/stackframe.h:49: Error: illegal operands `subu'
+../include/stackframe.h:50: Error: unrecognized opcode `$29,$27,'
+../include/stackframe.h:51: Error: junk at end of line, first unrecognized character is `('
+../include/stackframe.h:52: Error: illegal operands `sw'
+../include/stackframe.h:53: Error: unrecognized opcode `$26,'
+../include/stackframe.h:54: Error: junk at end of line, first unrecognized character is `('
+../include/stackframe.h:69: Warning: Used $at without ".set noat"
+../include/stackframe.h:99: Warning: .endm encountered without preceeding .macro
+../include/stackframe.h:104: Error: unknown pseudo-op: `.'
+../include/stackframe.h:105: Error: unrecognized opcode `macro RESTORE_SOME'
+../include/stackframe.h:106: Error: unknown pseudo-op: `.'
+../include/stackframe.h:107: Error: unrecognized opcode `set mips1'
+../include/stackframe.h:110: Error: junk at end of line, first unrecognized character is `0'
+../include/stackframe.h:112: Error: junk at end of line, first unrecognized character is `0'
+../include/stackframe.h:115: Error: absolute expression required `li'
+../include/stackframe.h:116: Error: junk at end of line, first unrecognized character is `0'
+../include/stackframe.h:155: Warning: Used $at without ".set noat"
+../include/stackframe.h:156: Warning: .endm encountered without preceeding .macro
+../include/stackframe.h:158: Error: unknown pseudo-op: `.'
+../include/stackframe.h:159: Error: unrecognized opcode `macro RESTORE_ALL'
+../include/stackframe.h:160: Error: unrecognized opcode `restore_some'
+../include/stackframe.h:161: Error: illegal operands `lw'
+../include/stackframe.h:162: Error: unrecognized opcode `$29,'
+../include/stackframe.h:163: Error: junk at end of line, first unrecognized character is `('
+../include/stackframe.h:164: Warning: .endm encountered without preceeding .macro
+../include/stackframe.h:166: Error: unknown pseudo-op: `.'
+../include/stackframe.h:167: Error: unrecognized opcode `set noreorder'
+../include/stackframe.h:168: Error: unknown pseudo-op: `.'
+../include/stackframe.h:169: Error: unrecognized opcode `macro RESTORE_ALL_AND_RET'
+../include/stackframe.h:170: Error: unrecognized opcode `restore_some'
+../include/stackframe.h:171: Error: illegal operands `lw'
+../include/stackframe.h:172: Error: unrecognized opcode `$26,'
+../include/stackframe.h:173: Error: junk at end of line, first unrecognized character is `('
+../include/stackframe.h:177: Warning: .endm encountered without preceeding .macro
+../include/stackframe.h:180: Error: unknown pseudo-op: `.'
+../include/stackframe.h:181: Error: unrecognized opcode `macro get_sp'
+../include/stackframe.h:184: Error: junk at end of line, first unrecognized character is `0'
+../include/stackframe.h:186: Error: junk at end of line, first unrecognized character is `0'
+../include/stackframe.h:188: Error: junk at end of line, first unrecognized character is `1'
+../include/stackframe.h:190: Error: illegal operands `li'
+../include/stackframe.h:191: Error: unrecognized opcode `$29, 0x82000000'
+../include/stackframe.h:196: Error: junk at end of line, first unrecognized character is `2'
+../include/stackframe.h:198: Error: illegal operands `lw'
+../include/stackframe.h:199: Error: unrecognized opcode `$29,'
+../include/stackframe.h:200: Error: unrecognized opcode `kernel_sp'
+../include/stackframe.h:206: Warning: .endm encountered without preceeding .macro
+genex.S:35: Error: unrecognized opcode `restore_some'
+genex.S:54: Error: unrecognized opcode `save_all'
+genex.S:55: Error: unrecognized opcode `cli'
+genex.S:156: Error: unrecognized opcode `save_all'
+genex.S:156: Error: unrecognized opcode `cli'
+genex.S:157: Error: unrecognized opcode `save_all'
+genex.S:157: Error: unrecognized opcode `cli'
+genex.S:158: Error: unrecognized opcode `save_all'
+genex.S:158: Error: unrecognized opcode `cli'
+make[1]: *** [Makefile:6: genex.o] Error 1
+make[1]: Leaving directory '/usr/src/workdir/lib'
+make: *** [Makefile:36: lib] Error 2
+Compile Error!
+[31m[01m[ There is something wrong with your vmlinux. ][0m
+[33m[01m[ You got 0 (of 100) this time. Fri Jun  3 01:17:03 CST 2022 ][0m
+Autotest: End at Fri Jun  3 01:17:03 CST 2022
