@@ -149,7 +149,6 @@ usr_load_elf(int fd, Elf32_Phdr *ph, int child_envid) {
         i += temp;
     }
     return 0;
-    return 0;
 }
 
 int spawn(char *prog, char **argv) {
@@ -160,7 +159,7 @@ int spawn(char *prog, char **argv) {
     int size, text_start, count;
     u_int i, *blk;
     u_int esp;
-    Elf32_Ehdr *ehdr;
+    Elf32_Ehdr *elf;
     Elf32_Phdr *phdr;
 
     int res;
@@ -174,14 +173,14 @@ int spawn(char *prog, char **argv) {
     // Before Step 2 , You had better check the "target" spawned is a execute bin
     fd = r;
     if ((r = readn(fd, elfbuf, sizeof(Elf32_Ehdr))) < 0)user_panic("read ehdr failed");
-    ehdr = elfbuf;
+    elf = elfbuf;
 
     res = ((struct Filefd *) num2fd(fd))->f_file.f_size;
 
-    if (res < 4 || !usr_is_elf_format(ehdr) || ehdr->e_type != 2)user_panic("not elf or exec");
-    size = ehdr->e_phentsize;
-    text_start = ehdr->e_phoff;
-    count = ehdr->e_phnum;
+    if (res < 4 || !usr_is_elf_format(elf) || elf->e_type != 2)user_panic("not elf or exec");
+    size = elf->e_phentsize;
+    text_start = elf->e_phoff;
+    count = elf->e_phnum;
 
     // Step 2: Allocate an env (Hint: using syscall_env_alloc())
     if ((child_envid = syscall_env_alloc()) < 0)user_panic("syscall_env_alloc failed");
