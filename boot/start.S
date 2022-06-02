@@ -13,9 +13,9 @@
 #include <asm/cp0regdef.h>
 #include <asm/asm.h>
 .section .text.exc_vec3
-/*** exercise 3.11 ***/
+/*** exercise 3.12 ***/
 NESTED(except_vec3, 0, sp)
-    .set noat 
+    .set noat
     .set noreorder
 1:
     mfc0 k1,CP0_CAUSE
@@ -49,7 +49,7 @@ KERNEL_STACK:
 
             .text
 LEAF(_start)
-    
+
     .set    mips2
     .set    reorder
 
@@ -71,12 +71,11 @@ LEAF(_start)
 
     li    t0,0x80400000
     sw    t0,mCONTEXT
-    
+
     /* jump to main */
     jal    main
-            
+
 loop:
     j    loop
     nop
 END(_start)
-
