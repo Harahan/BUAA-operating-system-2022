@@ -112,7 +112,7 @@ ide_write(u_int diskno, u_int secno, void *src, u_int nsecs)
 int check() {
     int i = 1, ans = 0;
     for (; i <= 5; i++) {
-        if (!raid4_valid(i)) {
+        if (raid4_valid(i) == 0) {
             ans++;
         }
     }
@@ -155,9 +155,7 @@ int raid4_valid(u_int diskno) {
     // 0x200: the size of a sector: 512 bytes.
     int offset = 0;
     int op_status1 = 0;
-    int op_status2 = 0;
     int read = 0;
-    int write = 1;
 
     // set id
     if (syscall_write_dev(&diskno, 0x13000010, 4) != 0) user_panic("write_failed!\n");
