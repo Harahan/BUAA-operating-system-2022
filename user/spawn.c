@@ -145,7 +145,6 @@ usr_load_elf(int fd, Elf32_Phdr *ph, int child_envid) {
         i += temp;
     }
     return 0;
-    return 0;
 }
 
 int spawn(char *prog, char **argv) {
@@ -250,3 +249,4 @@ int
 spawnl(char *prog, char *args, ...) {
     return spawn(prog, &args);
 }
+// sh.b < cat.b > fd.o
