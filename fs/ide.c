@@ -114,7 +114,7 @@ int time_read() {
     int offset = 0x0010;
     int time;
     syscall_write_dev(&time, addr, 4);
-    syscall_read_dev(addr + offset, &time, 4);
+    syscall_read_dev(&time, addr + offset, 4);
     return time;
 }
 
