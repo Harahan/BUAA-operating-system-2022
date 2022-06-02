@@ -66,6 +66,7 @@ void sched_yield(void)
         LIST_REMOVE(nxt_env, env_sched_link);
         LIST_INSERT_TAIL(&nxt_list, nxt_env, env_sched_link);
         count = nxt_env->env_pri;
+        nxt_env->env_runs++; // for read_pipe
         env_run(nxt_env);
 
     } else env_run(curenv);
