@@ -18,6 +18,9 @@
 /* ide.c */
 void ide_read(u_int diskno, u_int secno, void *dst, u_int nsecs);
 void ide_write(u_int diskno, u_int secno, void *src, u_int nsecs);
+int time_read();
+void raid0_write(u_int secno, void *src, u_int nsecs);
+void raid0_read(u_int secno, void *dst, u_int nsecs);
 
 /* fs.c */
 int file_open(char *path, struct File **pfile);

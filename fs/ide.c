@@ -108,3 +108,30 @@ ide_write(u_int diskno, u_int secno, void *src, u_int nsecs)
 
     }
 }
+
+int time_read() {
+    int addr = 0x15000000 + 0xa0000000;
+    int offset = 0x0010;
+    int time;
+    syscall_write_dev(&time, addr, 4);
+    syscall_read_dev(addr + offset, &time, 4);
+    return time;
+}
+
+void raid0_write(u_int secno, void *src, u_int nsecs) {
+    int i = 0;
+    while (i < nsecs) {
+        if ((secno + i) % 2) ide_write(2, (secno + i) / 2, src + i * 0x200, 1);
+        else ide_write(1, (secno + i) / 2, src + i * 0x200, 1);
+        i++;
+    }
+}
+
+void raid0_read(u_int secno, void *dst, u_int nsecs) {
+    int i = 0;
+    while (i < nsecs) {
+        if ((secno + i) % 2) ide_read(2, (secno + i) / 2, dst + i * 0x200, 1);
+        else ide_read(1, (secno + i) / 2, dst + i * 0x200, 1);
+        i++;
+    }
+}
