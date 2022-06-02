@@ -110,9 +110,9 @@ ide_write(u_int diskno, u_int secno, void *src, u_int nsecs)
 }
 
 int time_read() {
-    int addr = 0x15000000 + 0xa0000000;
+    int addr = 0x15000000;
     int offset = 0x0010;
-    int time;
+    int time = 1;
     syscall_write_dev(&time, addr, 4);
     syscall_read_dev(&time, addr + offset, 4);
     return time;

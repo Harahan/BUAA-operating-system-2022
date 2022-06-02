@@ -20,7 +20,7 @@ void mips_init() {
  
 	trap_init();
 	kclock_init();
-
+    // time_read();
 
 	while(1);
 	panic("init.c:\tend of mips_init() reached!");
