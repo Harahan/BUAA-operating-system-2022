@@ -443,7 +443,7 @@ env_free(struct Env *e)
         page_decref(pa2page(pa));
         /* Hint: invalidate page table in TLB */
         /***fix lab3 bug in lab5***/
-        tlb_invalidate(e->env_pgdir, UVPT + (pdeno << PGSHIFT));
+        //tlb_invalidate(e->env_pgdir, UVPT + (pdeno << PGSHIFT));
     }
     /* Hint: free the page directory. */
     pa = e->env_cr3;
@@ -454,7 +454,7 @@ env_free(struct Env *e)
     page_decref(pa2page(pa));
     /* Hint: invalidate page directory in TLB. */
     /***fix lab3 bug in lab5***/
-    tlb_invalidate(e->env_pgdir, UVPT + (UVPT >> 10));
+   // tlb_invalidate(e->env_pgdir, UVPT + (UVPT >> 10));
     /* Hint: return the environment to the free list. */
     e->env_status = ENV_FREE;
     LIST_INSERT_HEAD(&env_free_list, e, env_link);

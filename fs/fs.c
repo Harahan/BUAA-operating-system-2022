@@ -133,7 +133,7 @@ read_block(u_int blockno, void **blk, u_int *isnew)
 	va = diskaddr(blockno);
 
 	// Step 4: read disk and set *isnew.
-	// Hint: 
+	// Hint:
 	//  If this block is already mapped, just set *isnew, else alloc memory and
 	//  read data from IDE disk (use `syscall_mem_alloc` and `ide_read`).
 	//  We have only one IDE disk, so the diskno of ide_read should be 0.

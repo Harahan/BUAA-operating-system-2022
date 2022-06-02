@@ -244,7 +244,7 @@ void write_file(struct File *dirf, const char *path) {
     if (target == NULL) return;
 
     int fd = open(path, O_RDONLY);
- 
+
     // Get file name with no path prefix.
     const char *fname = strrchr(path, '/');
     if(fname)
@@ -252,10 +252,10 @@ void write_file(struct File *dirf, const char *path) {
     else
         fname = path;
     strcpy(target->f_name, fname);
- 
+
     target->f_size = lseek(fd, 0, SEEK_END);
     target->f_type = FTYPE_REG;
- 
+
     // Start reading file.
     lseek(fd, 0, SEEK_SET);
     while((r = read(fd, disk[nextbno].data, n)) > 0) {
