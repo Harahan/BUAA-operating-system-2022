@@ -169,12 +169,6 @@ int raid4_valid(u_int diskno) {
     // get status
     if (syscall_read_dev(&op_status1, 0x13000030, 4) != 0) user_panic("read_failed!\n");
     if (op_status1 == 0) return 0;
-
-    // start write
-    if (syscall_write_dev(&write, 0x13000020, 4) != 0) user_panic("write_failed!\n");
-    // get status
-    if (syscall_read_dev(&op_status2, 0x13000030, 4) != 0) user_panic("read_failed!\n");
-    if (op_status2 == 0) return 0;
     return 1;
 
 }
