@@ -184,7 +184,7 @@ int raid4_write(u_int blockno, void *src) {
     while (start_secno + i <= end_secno) {
         int j = 1;
         for (; j <= 4; j++) {
-            if (raid4_valid(j)) ide_write(j, start_secno + i, src + i * BY2PG / 2 + 0x200 * j, 1);
+            if (raid4_valid(j)) ide_write(j, start_secno + i, src + i * BY2PG / 2 + 0x200 * (j - 1), 1);
         }
         i++;
     }
@@ -206,7 +206,7 @@ int raid4_read(u_int blockno, void *dst) {
         while (start_secno + i <= end_secno) {
             int j = 1;
             for (; j <= 4; j++) {
-                ide_read(j, start_secno + i, dst + i * BY2PG / 2 + 0x200 * j, 1);
+                ide_read(j, start_secno + i, dst + i * BY2PG / 2 + 0x200 * (j - 1), 1);
             }
             i++;
         }
