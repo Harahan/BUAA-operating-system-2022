@@ -189,9 +189,9 @@ int raid4_write(u_int blockno, void *src) {
         i++;
     }
     get_code(src);
-    ide_write(5, start_secno, arr, 1);
+    if (raid4_valid(5)) ide_write(5, start_secno, arr, 1);
     get_code(src);
-    ide_write(5, start_secno + 1, arr, 1);
+    if (raid4_valid(5)) ide_write(5, start_secno + 1, arr, 1);
     return check();
 }
 
