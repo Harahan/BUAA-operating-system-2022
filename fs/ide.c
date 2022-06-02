@@ -207,11 +207,18 @@ int raid4_read(u_int blockno, void *dst) {
     for (k = 1; k <= 4; k++) {
         if (raid4_valid(k) == 0) {
             for (i=0; i<BY2PG/8; i++) {
-                char restore_data1, restore_data2;
+                char restore_data1=0, restore_data2=0;
                 int j = 1;
-                for (j = 1; j <= 4; j++) if (k != j) {
-                        restore_data1 ^= ((char *)(dst + (j-1) * BY2PG/8))[i];
-                        restore_data2 ^= ((char *)(dst + (j+3) * BY2PG/8))[i];
+                for (j = 1; j <= 5; j++) if (k != j) {
+                        if (j != 5) {
+                            restore_data1 ^= ((char *)(dst + (j-1) * BY2PG/8))[i];
+                            restore_data2 ^= ((char *)(dst + (j+3) * BY2PG/8))[i];
+                        } else {
+                            ide_read(5, 2*blockno, raid_check1, 1);
+                            ide_read(5, 2*blockno+1, raid_check2, 1);
+                            restore_data1 ^= raid_check1[i];
+                            restore_data2 ^= raid_check2[i];
+                        }
                     }
                 ((char *)(dst + (k-1) * BY2PG/8))[i] = restore_data1;
                 ((char *)(dst + (k+3) * BY2PG/8))[i] = restore_data2;
