@@ -2,9 +2,7 @@ INCLUDES = -I../include/ -I../user/
 
 user_dir := ../user
 tools_dir := .
-fsformat  := ./fsformat
-
-USERLIB :=	$(user_dir)/printf.o \
+USERLIB :=  $(user_dir)/printf.o \
 		$(user_dir)/print.o \
 		$(user_dir)/libos.o \
 		$(user_dir)/fork.o \
@@ -74,6 +72,6 @@ fs.img: $(FSIMGFILES)
 .PHONY: clean
 
 clean:
-	rm -rf *~ *.o *.b.c *.b *.x $(fsformat)
+	rm -rf *~ *.o *.b.c *.b *.x
 
 include ../include.mk

@@ -2,7 +2,6 @@
 #include <asm/cp0regdef.h>
 #include <asm/asm.h>
 
-/* Exercise 2.10 */
 LEAF(tlb_out)
 //1: j 1b
 nop

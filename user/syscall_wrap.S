@@ -8,5 +8,5 @@ LEAF(msyscall)
     syscall
     jr ra
     nop
-
 END(msyscall)
+

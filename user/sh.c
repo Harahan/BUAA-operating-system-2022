@@ -111,12 +111,12 @@ runcmd(char *s) {
                 break;
             case '>':
                 if (gettoken(0, &t) != 'w') {
-                    writef("syntax error: > not followed by word\n");
+                    writef("syntax error: < not followed by word\n");
                     exit();
                 }
                 // Your code here -- open t for writing,
                 // dup it onto fd 1, and then close the fd you got.
-                if ((r = open(t, O_WRONLY | O_CREAT)) < 0)user_panic("> open failed");
+                if ((r = open(t, O_WRONLY)) < 0)user_panic("> open failed");
                 fd = r;
                 dup(fd, 1);
                 close(fd);
@@ -229,19 +229,19 @@ umain(int argc, char **argv) {
     writef("::                                                         ::\n");
     writef(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
     ARGBEGIN
-            {
-                case 'd':
-                    debug_++;
-                    break;
-                case 'i':
-                    interactive = 1;
-                    break;
-                case 'x':
-                    echocmds = 1;
-                    break;
-                default:
-                    usage();
-            }
+    {
+        case 'd':
+            debug_++;
+        break;
+        case 'i':
+            interactive = 1;
+        break;
+        case 'x':
+            echocmds = 1;
+        break;
+        default:
+            usage();
+    }
     ARGEND
 
     if (argc > 1)
@@ -273,3 +273,4 @@ umain(int argc, char **argv) {
             wait(r);
     }
 }
+

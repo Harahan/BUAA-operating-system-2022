@@ -98,7 +98,7 @@ int usr_is_elf_format(u_char *binary) {
 
 int
 usr_load_elf(int fd, Elf32_Phdr *ph, int child_envid) {
-    //Hint: maybe this function is useful
+    //Hint: maybe this function is useful 
     //      If you want to use this func, you should fill it ,it's not hard
     u_long i = 0;
     int r;
@@ -145,6 +145,7 @@ usr_load_elf(int fd, Elf32_Phdr *ph, int child_envid) {
         i += temp;
     }
     return 0;
+    return 0;
 }
 
 int spawn(char *prog, char **argv) {
@@ -155,7 +156,7 @@ int spawn(char *prog, char **argv) {
     int size, text_start, count;
     u_int i, *blk;
     u_int esp;
-    Elf32_Ehdr *elf;
+    Elf32_Ehdr *ehdr;
     Elf32_Phdr *phdr;
 
     int res;
@@ -169,14 +170,14 @@ int spawn(char *prog, char **argv) {
     // Before Step 2 , You had better check the "target" spawned is a execute bin
     fd = r;
     if ((r = readn(fd, elfbuf, sizeof(Elf32_Ehdr))) < 0)user_panic("read ehdr failed");
-    elf = elfbuf;
+    ehdr = elfbuf;
 
     res = ((struct Filefd *) num2fd(fd))->f_file.f_size;
 
-    if (res < 4 || !usr_is_elf_format(elf) || elf->e_type != 2)user_panic("not elf or exec");
-    size = elf->e_phentsize;
-    text_start = elf->e_phoff;
-    count = elf->e_phnum;
+    if (res < 4 || !usr_is_elf_format(ehdr) || ehdr->e_type != 2)user_panic("not elf or exec");
+    size = ehdr->e_phentsize;
+    text_start = ehdr->e_phoff;
+    count = ehdr->e_phnum;
 
     // Step 2: Allocate an env (Hint: using syscall_env_alloc())
     if ((child_envid = syscall_env_alloc()) < 0)user_panic("syscall_env_alloc failed");
@@ -186,12 +187,12 @@ int spawn(char *prog, char **argv) {
     // Step 3: Map file's content to new env's text segment
     //        Hint 1: what is the offset of the text segment in file? try to use objdump to find out.
     //        Hint 2: using read_map(...)
-    //        Hint 3: Important!!! sometimes ,its not safe to use read_map ,guess why
+    //        Hint 3: Important!!! sometimes ,its not safe to use read_map ,guess why 
     //                If you understand, you can achieve the "load APP" with any method
     // Note1: Step 1 and 2 need sanity check. In other words, you should check whether
     //       the file is opened successfully, and env is allocated successfully.
     // Note2: You can achieve this func in any way ，remember to ensure the correctness
-    //        Maybe you can review lab3
+    //        Maybe you can review lab3 
     // Your code ends here
     for (i = 0; i < count; i++) {
         if ((r = seek(fd, text_start)) < 0)user_panic("seek failed");
@@ -249,4 +250,5 @@ int
 spawnl(char *prog, char *args, ...) {
     return spawn(prog, &args);
 }
-// sh.b < cat.b > fd.o
+
+
