@@ -100,49 +100,41 @@ int
 usr_load_elf(int fd, Elf32_Phdr *ph, int child_envid) {
     //Hint: maybe this function is useful
     //      If you want to use this func, you should fill it ,it's not hard
-    u_long i = 0;
+    u_long va = ph->p_vaddr;
+    u_int32_t sgsize = ph->p_memsz;
+    u_int32_t bin_size = ph->p_filesz;
+    u_char *bin;
+    u_long i;
     int r;
-    u_int va = ph->p_vaddr;
-    u_int sgsize = ph->p_memsz;
-    u_int bin_size = ph->p_filesz;
-    u_int file_offset = ph->p_offset;
     u_long offset = va - ROUNDDOWN(va, BY2PG);
-    u_char buf[BY2PG];
-
-
-    int temp;
-    if (offset) {
-        temp = MIN(BY2PG - offset, bin_size);
-        if ((r = syscall_mem_alloc(child_envid, va, PTE_V | PTE_R)) < 0)return r;
-        if ((r = seek(fd, file_offset)) < 0)return r;
-        if ((r = readn(fd, buf, temp)) < 0)return r;
-        if ((r = syscall_mem_map(child_envid, va, 0, BUFPAGE, PTE_V | PTE_R)) < 0)return r;
-        user_bcopy(buf, BUFPAGE + offset, temp);
-        if ((r = syscall_mem_unmap(0, BUFPAGE)) < 0)return r;
-        i = temp;
+    r = read_map(fd, ph->p_offset, &bin);
+    if (r < 0)
+        return r;
+    if (offset != 0)
+    {
+        if ((r = syscall_mem_alloc(child_envid, va, PTE_V | PTE_R)) < 0)
+            return r;
+        if ((r = syscall_mem_map(child_envid, va, 0, USTACKTOP, PTE_V | PTE_R)) < 0)
+            return r;
+        user_bcopy(bin, USTACKTOP + offset, MIN(BY2PG - offset, bin_size));
+        if ((r = syscall_mem_unmap(0, USTACKTOP)) < 0)
+            return r;
     }
-    while (i < bin_size) {
-        temp = MIN(BY2PG, bin_size - i);
-        if ((r = syscall_mem_alloc(child_envid, va + i, PTE_V | PTE_R)) < 0)return r;
-        if ((r = seek(fd, file_offset + i)) < 0)return r;
-        if ((r = readn(fd, buf, temp)) < 0)return r;
-        if ((r = syscall_mem_map(child_envid, va + i, 0, BUFPAGE, PTE_V | PTE_R)) < 0)return r;
-        user_bcopy(buf, BUFPAGE, temp);
-        if ((r = syscall_mem_unmap(0, BUFPAGE)) < 0)return r;
-        i += temp;
+    for (i = offset ? MIN(BY2PG - offset, bin_size) : 0; i < bin_size; i += BY2PG)
+    {
+        if ((r = syscall_mem_alloc(child_envid, va + i, PTE_V | PTE_R)) < 0)
+            return r;
+        if ((r = syscall_mem_map(child_envid, va + i, 0, USTACKTOP, PTE_V | PTE_R)) < 0)
+            return r;
+        user_bcopy(bin + i, USTACKTOP, MIN(BY2PG, bin_size - i));
+        if ((r = syscall_mem_unmap(0, USTACKTOP)) < 0)
+            return r;
     }
-    if (va + i - ROUNDDOWN(va + i, BY2PG)) {
-        offset = va + i - ROUNDDOWN(va + i, BY2PG);
-        temp = MIN(BY2PG - offset, sgsize - i);
-        if ((r = syscall_mem_map(child_envid, va + i, 0, BUFPAGE, PTE_V | PTE_R)) < 0)return r;
-        user_bzero(BUFPAGE + offset, temp);
-        if ((r = syscall_mem_unmap(0, BUFPAGE)) < 0)return r;
-        i += temp;
-    }
-    while (i < sgsize) {
-        temp = MIN(BY2PG, sgsize - i);
-        if ((r = syscall_mem_alloc(child_envid, va + i, PTE_V | PTE_R)) < 0)return r;
-        i += temp;
+    while (i < sgsize)
+    {
+        if ((r = syscall_mem_alloc(child_envid, va + i, PTE_V | PTE_R)) < 0)
+            return r;
+        i += BY2PG;
     }
     return 0;
 }
