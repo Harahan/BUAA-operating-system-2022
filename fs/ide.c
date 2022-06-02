@@ -173,18 +173,22 @@ int raid4_valid(u_int diskno) {
 
 int raid4_write(u_int blockno, void *src) {
     int start_secno = blockno * 2, end_secno = blockno * 2 + 1, i = 0;
+    int fault = 0;
     while (start_secno + i <= end_secno) {
         int j = 1;
         for (; j <= 4; j++) {
             if (raid4_valid(j)) ide_write(j, start_secno + i, src + i * BY2PG / 2 + 0x200 * (j - 1), 1);
+            else fault++;
         }
         i++;
     }
     get_code(src);
     if (raid4_valid(5)) ide_write(5, start_secno, arr, 1);
+    else fault++;
     get_code(src);
     if (raid4_valid(5)) ide_write(5, start_secno + 1, arr, 1);
-    return check();
+    else fault++;
+    return fault / 2;
 }
 
 int raid4_read(u_int blockno, void *dst) {
