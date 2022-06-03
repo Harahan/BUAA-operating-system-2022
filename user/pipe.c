@@ -71,15 +71,15 @@ static int
 _pipeisclosed(struct Fd *fd, struct Pipe *p)
 {
 	// Your code here.
-	// 
+	//
 	// Check pageref(fd) and pageref(p),
 	// returning 1 if they're the same, 0 otherwise.
-	// 
+	//
 	// The logic here is that pageref(p) is the total
 	// number of readers *and* writers, whereas pageref(fd)
 	// is the number of file descriptors like fd (readers if fd is
 	// a reader, writers if fd is a writer).
-	// 
+	//
 	// If the number of file descriptors like fd is equal
 	// to the total number of readers and writers, then
 	// everybody left is what fd is.  So the other end of
@@ -114,7 +114,7 @@ static int
 piperead(struct Fd *fd, void *vbuf, u_int n, u_int offset)
 {
 	// Your code here.  See the lab text for a description of
-	// what piperead needs to do.  Write a loop that 
+	// what piperead needs to do.  Write a loop that
 	// transfers one byte at a time.  If you decide you need
 	// to yield (because the pipe is empty), only yield if
 	// you have not yet copied any bytes.  (If you have copied
@@ -125,7 +125,7 @@ piperead(struct Fd *fd, void *vbuf, u_int n, u_int offset)
 	struct Pipe *p;
 	char *rbuf;
 	p = (struct Pipe*) fd2data(fd);
-    while (p -> p_rpos == p -> p_wpos) {
+    while (p->p_rpos == p->p_wpos) {
         if (_pipeisclosed(fd, p)) return 0;
         syscall_yield();
     }
@@ -147,7 +147,7 @@ piperead(struct Fd *fd, void *vbuf, u_int n, u_int offset)
 static int
 pipewrite(struct Fd *fd, const void *vbuf, u_int n, u_int offset)
 {
-	// Your code here.  See the lab text for a description of what 
+	// Your code here.  See the lab text for a description of what
 	// pipewrite needs to do.  Write a loop that transfers one byte
 	// at a time.  Unlike in read, it is not okay to write only some
 	// of the data.  If the pipe fills and you've only copied some of
@@ -157,11 +157,12 @@ pipewrite(struct Fd *fd, const void *vbuf, u_int n, u_int offset)
 	int i;
 	struct Pipe *p;
 	char *wbuf;
-	
+
 
 //	return -E_INVAL;
 
     p = fd2data(fd);
+    wbuf = vbuf;
     for (i = 0; i < n; i++) {
         while (p->p_wpos - p->p_rpos == BY2PIPE) {
             if (_pipeisclosed(fd, p)) return 0;
@@ -171,7 +172,7 @@ pipewrite(struct Fd *fd, const void *vbuf, u_int n, u_int offset)
         p->p_wpos++;
     }
 	return n;
-	
+
 	user_panic("pipewrite not implemented");
 
 	return n;
@@ -182,7 +183,7 @@ pipestat(struct Fd *fd, struct Stat *stat)
 {
 	struct Pipe *p;
 
-	
+
 
 }
 

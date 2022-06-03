@@ -14,7 +14,7 @@ struct Env *curenv = NULL;            // the current env
 
 static struct Env_list env_free_list;    // Free list
 struct Env_list env_sched_list[2];      // Runnable list
- 
+
 extern Pde *boot_pgdir;
 extern char *KERNEL_SP;
 
@@ -78,7 +78,7 @@ u_int mkenvid(struct Env *e) {
  *
  * Pre-Condition:
  *  penv points to a valid struct Env *  pointer,
- *  envid is valid, i.e. for the result env which has this envid, 
+ *  envid is valid, i.e. for the result env which has this envid,
  *  its status isn't ENV_FREE,
  *  checkperm is 0 or 1.
  *
@@ -486,7 +486,7 @@ extern void env_pop_tf(struct Trapframe *tf, int id);
 extern void lcontext(u_int contxt);
 
 /* Overview:
- *  Restore the register values in the Trapframe with env_pop_tf, 
+ *  Restore the register values in the Trapframe with env_pop_tf,
  *  and switch the context from 'curenv' to 'e'.
  *
  * Post-Condition:
@@ -501,8 +501,8 @@ void
 env_run(struct Env *e)
 {
     /* Step 1: save register state of curenv. */
-    /* Hint: if there is an environment running, 
-     *   you should switch the context and save the registers. 
+    /* Hint: if there is an environment running,
+     *   you should switch the context and save the registers.
      *   You can imitate env_destroy() 's behaviors.*/
     if (curenv != NULL) {
         struct Trapframe *old;
