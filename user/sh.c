@@ -1,7 +1,7 @@
 #include "lib.h"
 #include <args.h>
 
-int debug_ = 0;
+int debug_ = 1;
 
 //
 // get the next token from string s
@@ -116,7 +116,7 @@ runcmd(char *s) {
                 }
                 // Your code here -- open t for writing,
                 // dup it onto fd 1, and then close the fd you got.
-                if ((r = open(t, O_WRONLY | O_CREAT)) < 0)user_panic("> open failed");
+                if ((r = open(t, O_WRONLY)) < 0)user_panic("> open failed");
                 fd = r;
                 dup(fd, 1);
                 close(fd);
