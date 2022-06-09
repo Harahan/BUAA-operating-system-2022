@@ -127,6 +127,7 @@ duppage(u_int envid, u_int pn)
     }
     syscall_mem_map(0, addr, envid, addr, perm);
     if (flag) syscall_mem_map(0, addr, 0, addr, perm);
+    if (addr >= FDTABLE && addr <= FILEBASE) ((struct Filefd*) addr)->f_fd.fd_offset = 0;
 	//	user_panic("duppage not implemented");
 }
 
