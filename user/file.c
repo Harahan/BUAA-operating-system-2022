@@ -28,7 +28,7 @@ struct Dev devfile = {
 //	the file descriptor onsuccess,
 //	< 0 on failure.
 /*** exercise 5.8 ***/
-int tag[1024];
+int tag[2048];
 int
 open(const char *path, int mode)
 {
