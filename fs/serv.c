@@ -243,16 +243,11 @@ serve_sync(u_int envid)
 	fs_sync();
 	ipc_send(envid, 0, 0, 0);
 }
-
+char arr[1000];
 void serve_dir_list(u_int envid, struct Fsreq_dir_list *rq) {
-    u_char path[MAXPATHLEN];
+    u_char path[MAXPATHLEN] = {'\0'};
     user_bcopy(rq->req_path, path, MAXPATHLEN);
-    path[MAXPATHLEN - 1] = '\0';
-    char *p;
-    char name[MAXNAMELEN];
-    struct File *dir, *file;
-    int r;
-    char arr[1000];
+    user_bzero(arr, sizeof(arr));
     get_dir_list(path, 0, 0, 0, arr);
     ipc_send(envid, 0, arr, PTE_R | PTE_V);
 }

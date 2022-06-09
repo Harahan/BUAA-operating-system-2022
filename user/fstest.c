@@ -3,22 +3,20 @@
 
 void umain()
 {
-    int r, fdnum, n;
-    char buf[200];
-    fdnum = open("/newmotd", O_RDWR | O_ALONE);
-    if ((r = fork()) == 0) {
-        n = read(fdnum, buf, 5);
-        writef("[child] buffer is \'%s\'\n", buf);
-    } else {
-        n = read(fdnum, buf, 5);
-        writef("[father] buffer is \'%s\'\n", buf);
-    }
+    int fdnum;
+    char buf[512];
+    list_dir("/", buf);
+    writef("dir of / : %s\n", buf);
+    fdnum = open("/created_file", O_RDWR|O_CREAT);
+    close(fdnum);
+    list_dir("/", buf);
+    writef("dir of / : %s\n", buf);
     while(1);
 }
 
-/* expected output:
+/* expected output: (with O_CREAT implemented)
 ==================================================================
-[father] buffer is 'This '
-[child] buffer is 'This '
+dir of / : motd newmotd
+dir of / : motd newmotd created_file
 ==================================================================
 */
