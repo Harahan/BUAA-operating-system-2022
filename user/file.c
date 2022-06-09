@@ -28,13 +28,13 @@ struct Dev devfile = {
 //	the file descriptor onsuccess,
 //	< 0 on failure.
 /*** exercise 5.8 ***/
+int tag[1024];
 int
 open(const char *path, int mode)
 {
 	struct Fd *fd;
 	struct Filefd *ffd;
 	u_int size, fileid;
-    static int tag[1024] = {0};
 	int r;
 	u_int va;
 	u_int i;
