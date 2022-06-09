@@ -275,7 +275,16 @@ sync(void)
 {
 	return fsipc_sync();
 }
-extern char *buf;
-int list_dir(const char* path, char* ans) {
-    fsipc_dir_list(path, ans);
+
+int list_dir(const char *path, char* ans) {
+    //writef("path:%s\n", path);
+    //writef("ans:%x\n", ans);
+    struct Fd *fd;
+    int r;
+    if ((r = fd_alloc(&fd)) < 0) return r;
+    r = fsipc_dir_list(path, (char *) fd);
+    if (r) return r;
+    user_bcopy((const char *)fd, ans, 1024);
+    //writef("%s\n", ans);
+    return 0;
 }

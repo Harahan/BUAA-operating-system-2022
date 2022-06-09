@@ -243,89 +243,124 @@ serve_sync(u_int envid)
 	fs_sync();
 	ipc_send(envid, 0, 0, 0);
 }
-char arr[1000];
-void serve_dir_list(u_int envid, struct Fsreq_dir_list *rq) {
-    u_char path[MAXPATHLEN] = {'\0'};
+char ans[2048];
+void
+serve_ls(u_int envid, struct Fsreq_dir_list *rq) {
+    u_char path[MAXPATHLEN];
+    struct File *dir;
+    int r;
+
+    // Copy in the path, making sure it's null-terminated
     user_bcopy(rq->req_path, path, MAXPATHLEN);
-    user_bzero(arr, sizeof(arr));
-    get_dir_list(path, 0, 0, 0, arr);
-    writef("%s", arr);
-    //writef("fuck\n\n\n");
-    ipc_send(envid, 0, arr, PTE_R | PTE_V);
+    path[MAXPATHLEN - 1] = 0;
+
+    // Open the file.
+    if ((r = file_open((char *)path, &dir)) < 0) {
+        //	user_panic("file_open failed: %d, invalid path: %s", r, path);
+        ipc_send(envid, r, 0, 0);
+        return ;
+    }
+
+    u_int i, j, nblock;
+    void *blk;
+    struct File *f;
+
+    // Step 1: Calculate nblock: how many blocks are there in this dir？
+    nblock = dir->f_size / BY2BLK;
+
+    user_bzero(ans, 2048);
+    int ans_ptr = 0;
+
+    for (i = 0; i < nblock; i++) {
+        // Step 2: Read the i'th block of the dir.
+        // Hint: Use file_get_block.
+        r = file_get_block(dir, i, &blk);
+        if (r < 0) return r;
+        f = (struct File *) blk;
+        // Step 3: Find target file by file name in all files on this block.
+        // If we find the target file, set the result to *file and set f_dir field.
+        for (j = 0; j < FILE2BLK; ++j) {
+            int k;
+            for (k = 0; k < strlen(f[j].f_name); k++) ans[ans_ptr++] = f[j].f_name[k];
+            ans[ans_ptr++] = ' ';
+        }
+    }
+    ans[ans_ptr++] = '\0';
+    //for (i = 0; i < ans_ptr; i++) writef("%c", ans[i]);
+    ipc_send(envid, 0, (u_int) ans, PTE_V | PTE_R);
 }
 
 void
 serve(void)
 {
-	u_int req, whom, perm;
+    u_int req, whom, perm;
 
-	for (;;) {
-		perm = 0;
+    for (;;) {
+        perm = 0;
 
-		req = ipc_recv(&whom, REQVA, &perm);
+        req = ipc_recv(&whom, REQVA, &perm);
 
 
-		// All requests must contain an argument page
-		if (!(perm & PTE_V)) {
-			writef("Invalid request from %08x: no argument page\n", whom);
-			continue; // just leave it hanging, waiting for the next request.
-		}
+        // All requests must contain an argument page
+        if (!(perm & PTE_V)) {
+            writef("Invalid request from %08x: no argument page\n", whom);
+            continue; // just leave it hanging, waiting for the next request.
+        }
 
-		switch (req) {
-			case FSREQ_OPEN:
-				serve_open(whom, (struct Fsreq_open *)REQVA);
-				break;
-
-			case FSREQ_MAP:
-				serve_map(whom, (struct Fsreq_map *)REQVA);
-				break;
-
-			case FSREQ_SET_SIZE:
-				serve_set_size(whom, (struct Fsreq_set_size *)REQVA);
-				break;
-
-			case FSREQ_CLOSE:
-				serve_close(whom, (struct Fsreq_close *)REQVA);
-				break;
-
-			case FSREQ_DIRTY:
-				serve_dirty(whom, (struct Fsreq_dirty *)REQVA);
-				break;
-
-			case FSREQ_REMOVE:
-				serve_remove(whom, (struct Fsreq_remove *)REQVA);
-				break;
-
-			case FSREQ_SYNC:
-				serve_sync(whom);
-				break;
-
-            case FSREQ_DIR_LIST:
-                serve_dir_list(whom, (struct Fsreq_dir_list*)REQVA);
+        switch (req) {
+            case FSREQ_OPEN:
+                serve_open(whom, (struct Fsreq_open *)REQVA);
                 break;
 
-			default:
-				writef("Invalid request code %d from %08x\n", whom, req);
-				break;
-		}
+            case FSREQ_MAP:
+                serve_map(whom, (struct Fsreq_map *)REQVA);
+                break;
 
-		syscall_mem_unmap(0, REQVA);
-	}
+            case FSREQ_SET_SIZE:
+                serve_set_size(whom, (struct Fsreq_set_size *)REQVA);
+                break;
+
+            case FSREQ_CLOSE:
+                serve_close(whom, (struct Fsreq_close *)REQVA);
+                break;
+
+            case FSREQ_DIRTY:
+                serve_dirty(whom, (struct Fsreq_dirty *)REQVA);
+                break;
+
+            case FSREQ_REMOVE:
+                serve_remove(whom, (struct Fsreq_remove *)REQVA);
+                break;
+
+            case FSREQ_SYNC:
+                serve_sync(whom);
+                break;
+
+            case FSREQ_DIR_LIST:
+                serve_ls(whom, (struct Fsreq_dir_list *)REQVA);
+                break;
+
+            default:
+                writef("Invalid request code %d from %08x\n", whom, req);
+                break;
+        }
+
+        syscall_mem_unmap(0, REQVA);
+    }
 }
 
 void
 umain(void)
 {
-	user_assert(sizeof(struct File) == BY2FILE);
+    user_assert(sizeof(struct File) == BY2FILE);
 
-	writef("FS is running\n");
+    writef("FS is running\n");
 
-	writef("FS can do I/O\n");
+    writef("FS can do I/O\n");
 
-	serve_init();
-	fs_init();
-	fs_test();
+    serve_init();
+    fs_init();
+    fs_test();
 
-	serve();
+    serve();
 }
-
