@@ -34,6 +34,7 @@ open(const char *path, int mode)
 	struct Fd *fd;
 	struct Filefd *ffd;
 	u_int size, fileid;
+    static int tag[1024] = {0};
 	int r;
 	u_int va;
 	u_int i;
@@ -52,7 +53,7 @@ open(const char *path, int mode)
     ffd = (struct Filefd*) fd;
     size = ffd->f_file.f_size;
     fileid = ffd->f_fileid;
-    if ((mode & O_ALONE)) fd->fd_offset = 0;
+    if ((mode & O_ALONE) && tag[fileid % 1024] == 0) {fd->fd_offset = 0; tag[fileid % 1024] = 1;}
     if (mode & O_APPEND) fd->fd_offset = ffd->f_file.f_size;
 
     // Step 4: Alloc memory, map the file content into memory.
