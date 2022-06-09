@@ -275,3 +275,7 @@ sync(void)
 {
 	return fsipc_sync();
 }
+
+int list_dir(const char* path, char* ans) {
+
+}

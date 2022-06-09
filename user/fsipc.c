@@ -122,6 +122,16 @@ fsipc_dirty(u_int fileid, u_int offset)
 	return fsipc(FSREQ_DIRTY, req, 0, 0);
 }
 
+int fsipc_dir_list(const char *path, char* arr) {
+    struct Fsreq_dir_list *req = (struct Fsreq_dir_list*) fsipcbuf;
+    req = fsipcbuf;
+    // Step 3: Copy path to path in req.
+    strcpy(req->req_path, path);
+    req->addr = arr;
+    // Step 4: Send request to fs server with IPC.
+    return fsipc(FSREQ_DIR_LIST, req, arr, PTE_V | PTE_R);
+}
+
 // Overview:
 //	Ask the file server to delete a file, given its pathname.
 /*** exercise 5.10 ***/

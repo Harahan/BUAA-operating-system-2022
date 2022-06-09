@@ -29,6 +29,7 @@ int file_dirty(struct File *f, u_int offset);
 void file_flush(struct File *);
 int
 file_create(char *path, struct File **file);
+int* get_dir_list(char *path, struct File **pdir, struct File **pfile, char *lastelem, char* arr);
 
 void fs_init(void);
 void fs_sync(void);

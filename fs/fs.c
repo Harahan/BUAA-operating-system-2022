@@ -683,6 +683,79 @@ walk_path(char *path, struct File **pdir, struct File **pfile, char *lastelem)
 	return 0;
 }
 
+int* get_dir_list(char *path, struct File **pdir, struct File **pfile, char *lastelem, char* arr) {
+    char *p;
+    char name[MAXNAMELEN];
+    struct File *dir, *file;
+    int r;
+
+    // start at the root.
+    path = skip_slash(path);
+    file = &super->s_root;
+    dir = 0;
+    name[0] = 0;
+
+    if (pdir) {
+        *pdir = 0;
+    }
+
+    //*pfile = 0;
+
+    // find the target file by name recursively.
+    while (*path != '/' && *(path+1) != '\0') {
+        dir = file;
+        p = path;
+
+        while (*path != '/' && *path != '\0') {
+            path++;
+        }
+
+        if (path - p >= MAXNAMELEN) {
+            return -E_BAD_PATH;
+        }
+
+        user_bcopy(p, name, path - p);
+        name[path - p] = '\0';
+        path = skip_slash(path);
+
+        if (dir->f_type != FTYPE_DIR) {
+            return -E_NOT_FOUND;
+        }
+
+        if ((r = dir_lookup(dir, name, &file)) < 0) {
+            writef("fuck you");
+
+            return r;
+        }
+    }
+
+    dir = file;
+    u_int i, j, nblock;
+    void *blk;
+    struct File *f;
+    int offest = 0;
+    char x = '\0';
+    // Step 1: Calculate nblock: how many blocks are there in this dir？
+    nblock = dir->f_size / BY2BLK;
+    for (i = 0; i < nblock; i++) {
+        // Step 2: Read the i'th block of the dir.
+        // Hint: Use file_get_block.
+        if ((r = file_get_block(dir, i, &blk)) < 0) return r;
+        f = blk;
+
+        // Step 3: Find target file by file name in all files on this block.
+        // If we find the target file, set the result to *file and set f_dir field.
+        for (j = 0; j < FILE2BLK; j++) {
+            strcpy(arr + offest, f[j].f_name);
+            offest += strlen((f+j)->f_name);
+            strcpy(arr + offest, &x);
+            offest += 1;
+            return 0;
+        }
+    }
+}
+
+
 // Overview:
 //	Open "path".
 //

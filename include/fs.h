@@ -63,6 +63,7 @@ struct Super {
 #define FSREQ_DIRTY	5
 #define FSREQ_REMOVE	6
 #define FSREQ_SYNC	7
+#define FSREQ_DIR_LIST 8
 
 struct Fsreq_open {
 	char req_path[MAXPATHLEN];
@@ -90,6 +91,11 @@ struct Fsreq_dirty {
 
 struct Fsreq_remove {
 	u_char req_path[MAXPATHLEN];
+};
+
+struct Fsreq_dir_list {
+    u_char req_path[MAXPATHLEN];
+    int addr;
 };
 
 #endif // _FS_H_

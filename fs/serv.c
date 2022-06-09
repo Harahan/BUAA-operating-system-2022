@@ -244,6 +244,19 @@ serve_sync(u_int envid)
 	ipc_send(envid, 0, 0, 0);
 }
 
+void serve_dir_list(u_int envid, struct Fsreq_dir_list *rq) {
+    u_char path[MAXPATHLEN];
+    user_bcopy(rq->req_path, path, MAXPATHLEN);
+    path[MAXPATHLEN - 1] = '\0';
+    char *p;
+    char name[MAXNAMELEN];
+    struct File *dir, *file;
+    int r;
+    char arr[1000];
+    get_dir_list(path, 0, 0, 0, arr);
+    ipc_send(envid, 0, arr, PTE_R | PTE_V);
+}
+
 void
 serve(void)
 {
@@ -289,6 +302,10 @@ serve(void)
 			case FSREQ_SYNC:
 				serve_sync(whom);
 				break;
+
+            case FSREQ_DIR_LIST:
+                serve_dir_list(whom, (struct Fsreq_dir_list*)REQVA);
+                break;
 
 			default:
 				writef("Invalid request code %d from %08x\n", whom, req);
