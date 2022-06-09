@@ -692,7 +692,7 @@ int* get_dir_list(char *path, struct File **pdir, struct File **pfile, char *las
     // start at the root.
     path = skip_slash(path);
     file = &super->s_root;
-    dir = 0;
+    dir = &super->s_root;
     name[0] = 0;
 
     if (pdir) {
@@ -702,7 +702,7 @@ int* get_dir_list(char *path, struct File **pdir, struct File **pfile, char *las
     //*pfile = 0;
 
     // find the target file by name recursively.
-    while (*path != '/' && *(path+1) != '\0') {
+    while ((*path != '/' && *(path+1) != '\0') || *path != '\0') {
         dir = file;
         p = path;
         while (*path != '/' && *path != '\0') {
@@ -720,12 +720,13 @@ int* get_dir_list(char *path, struct File **pdir, struct File **pfile, char *las
         }
     }
 
-    dir = file;
+    // dir = file;
     u_int i, j, nblock;
     void *blk;
     struct File *f;
     int offest = 0;
-    char x = '\0';
+    char x = ' ';
+    char y = '\0';
     // Step 1: Calculate nblock: how many blocks are there in this dir？
     nblock = dir->f_size / BY2BLK;
     for (i = 0; i < nblock; i++) {
@@ -737,11 +738,12 @@ int* get_dir_list(char *path, struct File **pdir, struct File **pfile, char *las
         // Step 3: Find target file by file name in all files on this block.
         // If we find the target file, set the result to *file and set f_dir field.
         for (j = 0; j < FILE2BLK; j++) {
+            if (f[j].f_name[0] == '\0') {strcpy(arr + offest - 1, &y);return 0;}
+            //writef("[%s]", f[j].f_name);
             strcpy(arr + offest, f[j].f_name);
             offest += strlen(f[j].f_name);
             strcpy(arr + offest, &x);
             offest += 1;
-            return 0;
         }
     }
 }

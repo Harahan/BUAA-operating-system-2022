@@ -275,7 +275,7 @@ sync(void)
 {
 	return fsipc_sync();
 }
-
+extern char *buf;
 int list_dir(const char* path, char* ans) {
-
+    fsipc_dir_list(path, ans);
 }

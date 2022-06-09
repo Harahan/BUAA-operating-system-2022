@@ -249,6 +249,8 @@ void serve_dir_list(u_int envid, struct Fsreq_dir_list *rq) {
     user_bcopy(rq->req_path, path, MAXPATHLEN);
     user_bzero(arr, sizeof(arr));
     get_dir_list(path, 0, 0, 0, arr);
+    writef("%s", arr);
+    //writef("fuck\n\n\n");
     ipc_send(envid, 0, arr, PTE_R | PTE_V);
 }
 
