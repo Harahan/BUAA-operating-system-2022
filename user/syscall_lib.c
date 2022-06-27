@@ -97,6 +97,6 @@ int syscall_read_dev(u_int va, u_int dev, u_int offset) {
     return msyscall(SYS_read_dev, va, dev, offset, 0, 0);
 }
 
-int syscall_env_var(char *name, char *value, u_int op) {
-    return msyscall(SYS_env_var, name, value, op, 0, 0);
+int syscall_env_var(char *name, char *value, u_int vis, u_int readonly, u_int op) {
+    return msyscall(SYS_env_var, name, value, vis, readonly, op);
 }

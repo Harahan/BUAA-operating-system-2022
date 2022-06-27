@@ -4,7 +4,7 @@ int flag[256];
 void touch(char *path, char *prefix) {
     int r, fd;
     char curpath[MAXPATHLEN] = {'\0'};
-    // if ((r = curpath_get(curpath)) < 0) fwritef(1, "touch: can't get environment var [curpath]\n");
+    if ((r = curpath_get(curpath)) < 0) fwritef(1, "touch: can't get environment var [curpath]\n");
     // absolute path
     if (path[0] == '/') strcpy(curpath, path);
     else {

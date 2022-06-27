@@ -1,7 +1,9 @@
 #include "lib.h"
 void history_init() {
     int r;
-    if ((r = create("/.history", FTYPE_REG)) < 0) user_panic("init .history failed: %d.\n", r);
+    if ((r = open("/.history", O_RDWR)) < 0) { // can't be created twice, or too low
+        if ((r = create("/.history", FTYPE_REG)) < 0) user_panic("init .history failed: %d.\n", r);
+    } else return;
 }
 
 void history_save(char *s) {

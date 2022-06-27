@@ -359,7 +359,7 @@ umain(int argc, char **argv) {
     for (;;) {
         char curpath[MAXPATHLEN];
         curpath_get(curpath);
-        if (interactive)fwritef(1, "\n" LIGHT_BLUE(%s) " " BOLD_GREEN($) " ", curpath);
+        if (interactive)fwritef(1, "\n%d:"LIGHT_BLUE(%s) BOLD_GREEN($) " ",syscall_getenvid(), curpath);
         readline(buf, sizeof buf);
 
         if (buf[0] == '#')

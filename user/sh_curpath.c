@@ -1,13 +1,18 @@
 #include "lib.h"
-const char *CURPTH_KEY = "curpath";
+const char *CURPATH_KEY = "curpath";
 void curpath_init(char *path) {
     int r;
-    if ((r = syscall_env_var(CURPTH_KEY, path, 0)) < 0) user_panic("Init curpath failed: %d", r);
+    if ((r = syscall_env_var(CURPATH_KEY, path, 0, 0, 0)) < 0) user_panic("Init curpath failed: %d", r);
 }
 
 int curpath_get(char *path) {
     int r;
-    if ((r = syscall_env_var(CURPTH_KEY, path, 2)) < 0) return r;
+    if ((r = syscall_env_var(CURPATH_KEY, path, 0, 0, 1)) < 0) return r;
+}
+
+int curpath_set(char *path) {
+    int r;
+    if ((r = syscall_env_var(CURPATH_KEY, path, 0, 0, 2)) < 0) return r;
 }
 
 int curpath_get_parent(char *path) {

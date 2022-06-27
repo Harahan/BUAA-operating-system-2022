@@ -40,6 +40,8 @@ USERAPPS :=  $(user_dir)/num.b  \
 		 $(user_dir)/clear.b \
 		 $(user_dir)/history.b \
 		 $(user_dir)/rm.b \
+		 $(user_dir)/unset.b \
+		 $(user_dir)/cd.b \
 		 $(user_dir)/testhang.b
 
 

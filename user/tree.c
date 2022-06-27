@@ -61,6 +61,10 @@ void umain(int argc, char **argv) { // only has the simple tree, no -d, -F, -l
             flag[(u_char) ARGC()]++;
     }
     ARGEND
-    if (argc == 0) tree("/", "");
-    else for (;i < argc; i++) tree(argv[i], argv[i]);
+    if (curpath_get(curpath) < 0) {
+        fwritef(1, "cd can't get environment var [curpath]\n");
+        return;
+    }
+    if (argc == 0) tree(curpath, "");
+    else for (i = 0;i < argc; i++) tree(argv[i], argv[i]);
 }

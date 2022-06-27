@@ -464,7 +464,21 @@ int sys_read_dev(int sysno, u_int va, u_int dev, u_int len)
     return -E_INVAL;
 }
 
-int sys_env_var(int sysno, char *name, char *value, u_int op) {
-    // TODO: remember to finish the function
+/*
+ * 0 - create, 1 - get, 2 - set, 3 - unset, 4 -get_list, 5 create readonly
+ */
+static struct var {
+    char name[64], values[256];
+    int env_id, readonly;
+    LIST_ENTRY(var) var_link;
+};
+LIST_HEAD(var_list, var);
+struct var_list local_vars, environment_vars;
+
+// vis - 0 env, 1 local
+// op - 0 create, 1 get, 2 set, unset 3
+int sys_env_var(int sysno, char *name, char *value, u_int vis, u_int readonly, u_int op) {
+    // printf("%s %s %d\n", name, value, op);
+
 }
 

@@ -26,5 +26,5 @@
 #define MAXERROR 14
 
 #endif // _ERROR_H_
-// each.c user/Makefile syscall_all.c fs/Makefile
-// cd.c export.c set.c, unset.c
+// user/Makefile fs/Makefile
+// export.c set.c, unset.c
