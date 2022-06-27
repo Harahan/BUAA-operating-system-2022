@@ -43,7 +43,8 @@ USERAPPS :=  $(user_dir)/num.b  \
 		 $(user_dir)/unset.b \
 		 $(user_dir)/declare.b \
 		 $(user_dir)/cd.b \
-		 $(user_dir)/testhang.b
+		 $(user_dir)/testhang.b \
+		 $(user_dir)/exist.b
 
 
 FSIMGFILES := motd newmotd $(user_dir)/testarg.b $(user_dir)/init.b $(USERAPPS)

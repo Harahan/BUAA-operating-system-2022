@@ -68,6 +68,7 @@ int syscall_cgetc();
 int syscall_env_var(u_int name, u_int value, u_int vis, u_int readonly, u_int op);
 void syscall_env_set_shell(int is_shell);
 void syscall_env_inherit_var(u_int envid);
+u_int syscall_env_get_shell();
 
 /*** exercise 5.5 ***/
 int syscall_write_dev(u_int va, u_int dev, u_int offset);

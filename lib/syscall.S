@@ -83,3 +83,4 @@ sys_call_table:                         // Syscall Table
     .word sys_env_var
     .word sys_env_set_shell
     .word sys_env_inherit_var
+    .word sys_env_get_shell

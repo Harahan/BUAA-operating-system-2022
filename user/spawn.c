@@ -216,7 +216,7 @@ int spawn(char *prog, char **argv) {
     if (strcmp(prog, "sh.b") == 0) {
         envs[ENVX(child_envid)].env_is_shell = 1;
         syscall_env_inherit_var(child_envid);
-        writef("\n"LIGHT_BLUE(--------shell)" %d "LIGHT_BLUE(created--------)"\n", child_envid);
+        // writef("\n"LIGHT_BLUE(--------shell)" %d "LIGHT_BLUE(created--------)"\n", child_envid);
     }
 
     // Share memory

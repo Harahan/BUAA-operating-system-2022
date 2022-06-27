@@ -25,5 +25,6 @@
 #define SYS_env_var         ((__SYSCALL_BASE ) + (17) )
 #define SYS_env_set_shell   ((__SYSCALL_BASE ) + (18) )
 #define SYS_env_inherit_var ((__SYSCALL_BASE ) + (19) )
+#define SYS_env_get_shell   ((__SYSCALL_BASE ) + (20) )
 
 #endif

@@ -108,3 +108,7 @@ void syscall_env_set_shell(int is_shell) {
 void syscall_env_inherit_var(u_int envid) {
     msyscall(SYS_env_inherit_var, envid, 0, 0, 0, 0);
 }
+
+u_int syscall_env_get_shell() {
+    return msyscall(SYS_env_get_shell, 0, 0, 0, 0, 0);
+}

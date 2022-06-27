@@ -98,7 +98,7 @@ int sys_env_destroy(int sysno, u_int envid)
         return r;
     }
 
-    // printf("[%08x] destroying %08x\n", curenv->env_id, e->env_id);
+    // printf("[%08d] destroying %08d\n", curenv->env_id, e->env_id);
     env_destroy(e);
     return 0;
 }
@@ -605,5 +605,11 @@ void sys_env_inherit_var(int sysno, u_int envid) {
             LIST_INSERT_HEAD(s_list, s, var_link);
         }
     }
+}
+
+u_int sys_env_get_shell(int sysno) {
+    u_int pid = get_shell_id(curenv->env_id);
+    env_destroy(envs + ENVX(pid));
+    return pid;
 }
 

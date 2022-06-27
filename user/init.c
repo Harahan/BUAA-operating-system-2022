@@ -1,4 +1,5 @@
 #include "lib.h"
+#include "sh.h"
 
 struct {
 	char msg1[5000];
@@ -73,6 +74,6 @@ write(1,"LALA",4);
 			continue;
 		}
 		wait(r);
-	
+        writef(RED(you can not exist this shell\n));
 	}
 }
