@@ -2,6 +2,7 @@
 #include <mmu.h>
 #include <env.h>
 #include <kerelf.h>
+#include "sh.h"
 
 #define debug 0
 #define TMPPAGE        (BY2PG)
@@ -211,7 +212,12 @@ int spawn(char *prog, char **argv) {
     tf = &(envs[ENVX(child_envid)].env_tf);
     tf->pc = UTEXT;
     tf->regs[29] = esp;
-
+    envs[ENVX(child_envid)].env_parent_id = syscall_getenvid();
+    if (strcmp(prog, "sh.b") == 0) {
+        envs[ENVX(child_envid)].env_is_shell = 1;
+        syscall_env_inherit_var(child_envid);
+        writef("\n"LIGHT_BLUE(--------shell)" %d "LIGHT_BLUE(created--------)"\n", child_envid);
+    }
 
     // Share memory
     u_int pdeno = 0;

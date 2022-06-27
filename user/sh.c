@@ -241,7 +241,7 @@ runcmd(char *s) {
         if (debug_) writef("[%08x] WAIT right-pipe %08x\n", env->env_id, rightpipe);
         wait(rightpipe);
     }
-
+    // writef("%s\n", prog_name);
     exit();
 }
 
@@ -255,7 +255,6 @@ readline(char *buf, u_int n) {
     int i, r, cmdi;
     char cmds[128][128];
     int cmdn = cmdi = history_read(cmds);
-
     r = 0;
     for (i = 0; i < n; i++) {
         if ((r = read(0, buf + i, 1)) != 1) {
@@ -321,6 +320,7 @@ usage(void) {
 void
 umain(int argc, char **argv) {
     int r, interactive, echocmds;
+    syscall_env_set_shell(1);
     interactive = '?';
     echocmds = 0;
     writef("\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
@@ -358,10 +358,9 @@ umain(int argc, char **argv) {
     curpath_init("/");
     for (;;) {
         char curpath[MAXPATHLEN];
-        curpath_get(curpath);
+        curpath_get(curpath); // if delete curpath, is ok
         if (interactive)fwritef(1, "\n%d:"LIGHT_BLUE(%s) BOLD_GREEN($) " ",syscall_getenvid(), curpath);
         readline(buf, sizeof buf);
-
         if (buf[0] == '#')
             continue;
         if (echocmds)
@@ -372,7 +371,8 @@ umain(int argc, char **argv) {
             runcmd(buf);
             exit();
             return;
-        } else
+        } else {
             wait(r);
+        }
     }
 }

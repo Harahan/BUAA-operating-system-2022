@@ -23,5 +23,7 @@
 #define SYS_write_dev		((__SYSCALL_BASE ) + (15) )
 #define SYS_read_dev		((__SYSCALL_BASE ) + (16) )
 #define SYS_env_var         ((__SYSCALL_BASE ) + (17) )
+#define SYS_env_set_shell   ((__SYSCALL_BASE ) + (18) )
+#define SYS_env_inherit_var ((__SYSCALL_BASE ) + (19) )
 
 #endif

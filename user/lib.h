@@ -65,7 +65,9 @@ void syscall_panic(char *msg);
 int syscall_ipc_can_send(u_int envid, u_int value, u_int srcva, u_int perm);
 void syscall_ipc_recv(u_int dstva);
 int syscall_cgetc();
-int syscall_env_var(char *name, char *value, u_int vis, u_int readonly, u_int op);
+int syscall_env_var(u_int name, u_int value, u_int vis, u_int readonly, u_int op);
+void syscall_env_set_shell(int is_shell);
+void syscall_env_inherit_var(u_int envid);
 
 /*** exercise 5.5 ***/
 int syscall_write_dev(u_int va, u_int dev, u_int offset);

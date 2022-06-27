@@ -467,18 +467,143 @@ int sys_read_dev(int sysno, u_int va, u_int dev, u_int len)
 /*
  * 0 - create, 1 - get, 2 - set, 3 - unset, 4 -get_list, 5 create readonly
  */
-static struct var {
-    char name[64], values[256];
-    int env_id, readonly;
+struct var {
+    char name[64], values[64];
+    int readonly, v, vis;
     LIST_ENTRY(var) var_link;
 };
 LIST_HEAD(var_list, var);
-struct var_list local_vars, environment_vars;
+struct var_list local_vars[1024];
+struct var vars[64];
+
+int get_shell_id(u_int envid) {
+    struct Env *env = &(envs[ENVX(envid)]);
+    while(env->env_is_shell != 1) env = &(envs[ENVX(env->env_parent_id)]);
+    return env->env_id;
+}
+
+struct var* get_var() {
+    int i = 0;
+    for (; i < 64; i++) {
+        if (vars[i].v == 0) return vars + i;
+    }
+}
+
+int create(const char *name, const char *value, const u_int vis, const u_int readonly, const int type) {
+    struct var_list *temp_list = &(local_vars[ENVX(get_shell_id(curenv->env_id))]);
+    // printf("env_id: %d name: %s value: %s vis %d readonly: %d\n", get_shell_id(curenv->env_id), name, value, vis, readonly);
+    struct var *tmp;
+    LIST_FOREACH(tmp, temp_list, var_link) {
+        if (strcmp(tmp->name, name) == 0 && tmp->readonly) {
+            return -E_ENV_VAR_READONLY;
+        } else if (strcmp(tmp->name, name) == 0) {
+            strcpy(tmp->values, value); tmp->vis = vis; tmp->readonly = readonly;
+            return 0;
+        }
+    }
+    if (type) return -E_ENV_VAR_NOT_FOUND;
+    tmp = get_var();
+    strcpy(tmp->values, value); tmp->vis = vis; tmp->readonly = readonly;
+    strcpy(tmp->name, name); tmp->v = 1;
+    LIST_INSERT_HEAD(temp_list, tmp, var_link);
+    // printf("env_id: %d name: %s value: %s vis %d readonly: %d\n", get_shell_id(curenv->env_id), name, value, vis, readonly);
+    return 0;
+}
+
+int get(char *name, char *value) {
+    // printf("env_id: %d name: %s\n", get_shell_id(curenv->env_id), name);
+    struct var_list *temp_list = &(local_vars[ENVX(get_shell_id(curenv->env_id))]);
+    struct var *tmp;
+    // int i = 0;
+    LIST_FOREACH(tmp, temp_list, var_link) {
+        // if (i++ > 5) break;
+        // printf("%s\n", tmp->name);
+        if (strcmp(tmp->name, name) == 0) {
+            strcpy(value, tmp->values);
+            return 0;
+        }
+    }
+    return -E_ENV_VAR_NOT_FOUND;
+}
+
+int unset(char *name) {
+    struct var_list *temp_list = &(local_vars[ENVX(get_shell_id(curenv->env_id))]);
+    struct var *tmp;
+    if (strcmp(name, "curpath") == 0) {
+        printf("curpath can't unset!\n");
+        return 0;
+    }
+    LIST_FOREACH(tmp, temp_list, var_link) {
+        if (strcmp(tmp->name, name) == 0 && tmp->readonly == 0) {
+            LIST_REMOVE(tmp, var_link);
+            tmp->v = 0;
+            return 0;
+        } else if (strcmp(tmp->name, name) == 0) {
+            return -E_ENV_VAR_READONLY;
+        }
+    }
+    return -E_ENV_VAR_NOT_FOUND;
+}
+
+int check(char* name) {
+    struct var_list *temp_list = &(local_vars[ENVX(get_shell_id(curenv->env_id))]);
+    struct var *tmp;
+    LIST_FOREACH(tmp, temp_list, var_link) {
+        if (strcmp(tmp->name, name) == 0) return 0;
+    }
+    return -E_ENV_VAR_NOT_FOUND;
+}
+
+int get_list(char *name, char *value) {
+    struct var_list *temp_list = &(local_vars[ENVX(get_shell_id(curenv->env_id))]);
+    struct var *tmp;
+    int pos = 0;
+    char **name_list = (char**)name, **value_list = (char**)value;
+    LIST_FOREACH(tmp, temp_list, var_link) {
+        name_list[pos] = tmp->name;
+        value_list[pos++] = tmp->values;
+    }
+    name_list[pos] = 0;
+    return 0;
+}
 
 // vis - 0 env, 1 local
-// op - 0 create, 1 get, 2 set, unset 3
+// op - 0 create, 1 get, 2 set, 3 unset, 4 get_list, 5 check
 int sys_env_var(int sysno, char *name, char *value, u_int vis, u_int readonly, u_int op) {
-    // printf("%s %s %d\n", name, value, op);
+    switch (op) {
+        case 0:
+            return create(name, value, vis, readonly, 0);
+        case 1:
+            return get(name, value);
+        case 2:
+            return create(name, value, vis, readonly, 1);
+        case 3:
+            return unset(name);
+        case 4:
+            return get_list(name, value);
+        case 5:
+            return check(name);
+        default:
+            return 0;
+    }
+}
 
+void sys_env_set_shell(int sysno, u_int is_shell) {
+    curenv->env_is_shell = is_shell;
+}
+
+void sys_env_inherit_var(int sysno, u_int envid) {
+    struct var_list *p_list = &(local_vars[ENVX(get_shell_id(envs[ENVX(envid)].env_parent_id))]),
+            *s_list = &(local_vars[ENVX(envid)]);
+    // printf("p_shell: %d s_shell: %d\n", get_shell_id(envs[ENVX(envid)].env_parent_id), envid);
+    struct var *tmp, *s;
+    LIST_FOREACH(tmp, p_list, var_link) {
+        if (tmp->vis == 0) {
+            s = get_var();
+            // printf("name: %s value: %s\n", tmp->name, tmp->values);
+            memcpy(s, tmp, sizeof(struct var));
+            LIST_INSERT_HEAD(s_list, s, var_link);
+        }
+    }
 }
 

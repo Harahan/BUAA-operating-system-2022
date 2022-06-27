@@ -97,6 +97,14 @@ int syscall_read_dev(u_int va, u_int dev, u_int offset) {
     return msyscall(SYS_read_dev, va, dev, offset, 0, 0);
 }
 
-int syscall_env_var(char *name, char *value, u_int vis, u_int readonly, u_int op) {
+int syscall_env_var(u_int name, u_int value, u_int vis, u_int readonly, u_int op) {
     return msyscall(SYS_env_var, name, value, vis, readonly, op);
+}
+
+void syscall_env_set_shell(int is_shell) {
+    msyscall(SYS_env_set_shell, is_shell, 0, 0, 0, 0);
+}
+
+void syscall_env_inherit_var(u_int envid) {
+    msyscall(SYS_env_inherit_var, envid, 0, 0, 0, 0);
 }

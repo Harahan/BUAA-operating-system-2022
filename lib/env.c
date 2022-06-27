@@ -449,6 +449,8 @@ env_free(struct Env *e)
     pa = e->env_cr3;
     e->env_pgdir = 0;
     e->env_cr3 = 0;
+    e->env_is_shell = 0;
+    e->env_parent_id = 0;
     /* Hint: free the ASID */
     asid_free(e->env_id >> (1 + LOG2NENV));
     page_decref(pa2page(pa));
@@ -662,12 +664,6 @@ char *strcpy(char *dst, const char *src) {
     char *addr = dst;
     while ((*dst++ = *src++));
     return addr;
-}
-
-u_int strhash(const char *str) {
-    unsigned int hash = 5381;
-    while(*str) hash = ((hash << 5) + hash) + (*str++);
-    return hash % ((1 << 8) - 1);
 }
 
 int strcmp(const char *p, const char *q) {

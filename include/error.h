@@ -20,11 +20,13 @@
 #define E_BAD_PATH	10	// Bad path
 #define E_FILE_EXISTS	11	// File already exists
 #define E_NOT_EXEC	12	// File not a valid executable
+// environment var
 #define E_ENV_VAR_NOT_FOUND 13
 #define E_ENV_VAR_READONLY 14
+#define E_ENV_VAR_EXISTS 15
 
-#define MAXERROR 14
+#define MAXERROR 15
 
 #endif // _ERROR_H_
 // user/Makefile fs/Makefile
-// export.c set.c, unset.c
+// export.c set.c

@@ -2,7 +2,8 @@
 const char *CURPATH_KEY = "curpath";
 void curpath_init(char *path) {
     int r;
-    if ((r = syscall_env_var(CURPATH_KEY, path, 0, 0, 0)) < 0) user_panic("Init curpath failed: %d", r);
+    if (syscall_env_var(CURPATH_KEY, path, 0, 0, 5) != 0
+    && (r = syscall_env_var(CURPATH_KEY, path, 0, 0, 0)) < 0) user_panic("Init curpath failed: %d", r);
 }
 
 int curpath_get(char *path) {
