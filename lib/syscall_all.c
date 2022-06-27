@@ -4,6 +4,7 @@
 #include <printf.h>
 #include <pmap.h>
 #include <sched.h>
+#include <error.h>
 
 extern char *KERNEL_SP;
 extern struct Env *curenv;
@@ -97,7 +98,7 @@ int sys_env_destroy(int sysno, u_int envid)
         return r;
     }
 
-    printf("[%08x] destroying %08x\n", curenv->env_id, e->env_id);
+    // printf("[%08x] destroying %08x\n", curenv->env_id, e->env_id);
     env_destroy(e);
     return 0;
 }
@@ -462,3 +463,8 @@ int sys_read_dev(int sysno, u_int va, u_int dev, u_int len)
     }
     return -E_INVAL;
 }
+
+int sys_env_var(int sysno, char *name, char *value, u_int op) {
+    // TODO: remember to finish the function
+}
+

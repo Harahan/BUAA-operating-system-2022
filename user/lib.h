@@ -65,6 +65,7 @@ void syscall_panic(char *msg);
 int syscall_ipc_can_send(u_int envid, u_int value, u_int srcva, u_int perm);
 void syscall_ipc_recv(u_int dstva);
 int syscall_cgetc();
+int syscall_env_var(char *name, char *value, u_int op);
 
 /*** exercise 5.5 ***/
 int syscall_write_dev(u_int va, u_int dev, u_int offset);
@@ -77,6 +78,8 @@ char *strcpy(char *dst, const char *src);
 const char *strchr(const char *s, char c);
 void *memcpy(void *destaddr, void const *srcaddr, u_int len);
 int strcmp(const char *p, const char *q);
+char *strcat(char *dst, const char *src);
+void strcls(char *str, int n);
 
 // ipc.c
 void	ipc_send(u_int whom, u_int val, u_int srcva, u_int perm);
@@ -111,6 +114,7 @@ int	fsipc_dirty(u_int, u_int);
 int	fsipc_remove(const char *);
 int	fsipc_sync(void);
 int	fsipc_incref(u_int);
+int fsipc_create(const char*, u_int);
 
 // fd.c
 int	close(int fd);
@@ -130,6 +134,17 @@ int	remove(const char *path);
 int	ftruncate(int fd, u_int size);
 int	sync(void);
 
+// sh_history.c
+void history_init();
+void history_save(char *s);
+int history_read(char (*cmd)[128]);
+
+// sh_curpath.c
+void curpath_init(char *path);
+int curpath_get(char *path);
+int curpath_set(char *path);
+int curpath_get_parent(char *path);
+
 #define user_assert(x)	\
 	do {	if (!(x)) user_panic("assertion failed: %s", #x); } while (0)
 
@@ -143,6 +158,7 @@ int	sync(void);
 #define	O_TRUNC		0x0200		/* truncate to zero length */
 #define	O_EXCL		0x0400		/* error if already exists */
 #define O_MKDIR		0x0800		/* create directory, not regular file */
+#define O_APP       0x1000      /*append to file*/
 
 
 #endif

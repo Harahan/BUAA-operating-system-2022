@@ -58,6 +58,8 @@ open(const char *path, int mode)
         if ((r = fsipc_map(fileid, i, va + i)) < 0) return r;
 
 	// Step 5: Return the number of file descriptor.
+    int fdnum = fd2num(fd);
+    if (mode & O_APP) seek(fdnum, size);
     return fd2num(fd);
 
 }
@@ -271,4 +273,11 @@ int
 sync(void)
 {
 	return fsipc_sync();
+}
+
+int
+create(const char *path, int type) {
+    int r;
+    if ((r = fsipc_create(path, type)) < 0) return r;
+    return 0;
 }

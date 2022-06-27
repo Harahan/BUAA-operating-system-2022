@@ -1,4 +1,5 @@
 #include "lib.h"
+#include "sh.h"
 
 int flag[256];
 
@@ -34,6 +35,7 @@ lsdir(char *path, char *prefix)
 		user_panic("short read in directory %s", path);
 	if (n < 0)
 		user_panic("error reading directory %s: %e", path, n);
+    close(fd);
 }
 
 void
@@ -50,7 +52,8 @@ ls1(char *prefix, u_int isdir, u_int size, char *name)
 			sep = "";
 		fwritef(1, "%s%s", prefix, sep);
 	}
-	fwritef(1, "%s", name);
+    if (isdir) fwritef(1, LIGHT_BLUE(%s), name);
+	else fwritef(1, "%s", name);
 	if(flag['F'] && isdir)
 		fwritef(1, "/");
 	fwritef(1, " ");
@@ -78,8 +81,10 @@ umain(int argc, char **argv)
 		break;
 	}ARGEND
 
+    char curpath[MAXPATHLEN];
+    curpath_get(curpath);
 	if (argc == 0)
-		ls("/", "");
+		ls(curpath, "");
 	else {
 		for (i=0; i<argc; i++)
 			ls(argv[i], argv[i]);

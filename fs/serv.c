@@ -94,7 +94,7 @@ open_lookup(u_int envid, u_int fileid, struct Open **po)
 void
 serve_open(u_int envid, struct Fsreq_open *rq)
 {
-	writef("serve_open %08x %x 0x%x\n", envid, (int)rq->req_path, rq->req_omode);
+	// writef("serve_open %08x %x 0x%x\n", envid, (int)rq->req_path, rq->req_omode);
 
 	u_char path[MAXPATHLEN];
 	struct File *f;
@@ -109,8 +109,17 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 
 	// Find a file id.
 	if ((r = open_alloc(&o)) < 0) {
-		user_panic("open_alloc failed: %d, invalid path: %s", r, path);
-		ipc_send(envid, r, 0, 0);
+		// user_panic("open_alloc failed: %d, invalid path: %s", r, path);
+        if (r == -E_NOT_FOUND && (rq->req_omode & O_CREAT)) {
+            if ((r = file_create(path, &f)) < 0) return r;
+            f->f_type = FTYPE_REG;
+        } else if (r == -E_NOT_FOUND && (rq->req_omode & O_MKDIR)) {
+            if ((r = file_create(path, &f)) < 0) return r;
+            f->f_type = FTYPE_DIR;
+        } else {
+            ipc_send(envid, r, 0, 0);
+            return;
+        }
 	}
 
 	fileid = r;
@@ -244,6 +253,18 @@ serve_sync(u_int envid)
 	ipc_send(envid, 0, 0, 0);
 }
 
+void serve_create(u_int envid, struct Fsreq_create *rq) {
+    struct File *file;
+    int r;
+    char path[MAXPATHLEN];
+    user_bcopy(rq->req_path, path, MAXPATHLEN);
+    path[MAXPATHLEN - 1] = '\0';
+    r = file_create(path, &file);
+    file->f_size = 0;
+    file->f_type = rq->req_type;
+    ipc_send(envid, r, 0, 0);
+}
+
 void
 serve(void)
 {
@@ -289,7 +310,9 @@ serve(void)
 			case FSREQ_SYNC:
 				serve_sync(whom);
 				break;
-
+            case FSREQ_CREATE:
+                serve_create(whom, (struct Fsreq_create*)REQVA);
+                break;
 			default:
 				writef("Invalid request code %d from %08x\n", whom, req);
 				break;

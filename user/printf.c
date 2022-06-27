@@ -19,9 +19,9 @@ static void user_myoutput(void *arg, const char *s, int l)
 	for (i = 0; i < l; i++) {
 		syscall_putchar(s[i]);
 
-		if (s[i] == '\n') {
+		/*if (s[i] == '\n') {
 			syscall_putchar('\n');
-		}
+		}*/
 	}
 }
 
@@ -42,7 +42,7 @@ _user_panic(const char *file, int line, const char *fmt, ...)
 	va_start(ap, fmt);
 	writef("panic at %s:%d: ", file, line);
 	user_lp_Print(user_myoutput, 0, (char *)fmt, ap);
-	writef("\n");
+	// writef("\n");
 	va_end(ap);
 
 

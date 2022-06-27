@@ -70,3 +70,13 @@ strcmp(const char *p, const char *q)
 	return 0;
 }
 
+char *strcat(char *dst, const char *src) {
+    char *addr = dst;
+    while (*dst) dst++;
+    while ((*dst++ = *src++));
+    return addr;
+}
+
+void strcls(char *str, int n) {
+    while (n--) *str++ = 0;
+}

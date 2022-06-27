@@ -77,7 +77,7 @@ ide_write(u_int diskno, u_int secno, void *src, u_int nsecs)
 	// int offset = ;
 
 	// DO NOT DELETE WRITEF !!!
-	writef("diskno: %d\n", diskno);
+	//writef("diskno: %d\n", diskno);
 
 	// while ( < ) {
 		// copy data from source array to disk buffer.
