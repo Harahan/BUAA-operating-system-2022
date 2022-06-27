@@ -1,4 +1,5 @@
 #include "lib.h"
+#include "sh.h"
 
 void
 umain(int argc, char **argv)
@@ -16,8 +17,10 @@ umain(int argc, char **argv)
             write(1, " ", 1);
         if (argv[i][0] == '$') {
             char value[128];
-            syscall_env_var(&argv[i][1], value, 0, 0, 1);
-            write(1, value, strlen(value));
+            if (syscall_env_var(&argv[i][1], value, 0, 0, 1) < 0) {
+                fwritef(1, "environment var" RED([%s]) "not found!\n", &argv[i][1]);
+                // exit();
+            }else write(1, value, strlen(value));
         } else write(1, argv[i], strlen(argv[i]));
     }   
     if (!nflag)

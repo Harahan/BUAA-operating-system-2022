@@ -13,7 +13,10 @@ void print_var() {
 }
 
 void declare(char* name, char* value, int vis, int readonly) {
-    if (syscall_env_var(name, value, vis, readonly, 0) < 0) fwritef(1, "environment var" RED([%s]) "is readonly!\n", name);
+    if (syscall_env_var(name, value, vis, readonly, 0) < 0) {
+        fwritef(1, "environment var" RED([%s]) "is readonly!\n", name);
+        exit();
+    }
 }
 
 void usage(void) {
