@@ -609,6 +609,12 @@ void sys_env_inherit_var(int sysno, u_int envid) {
 
 u_int sys_env_get_shell(int sysno) {
     u_int pid = get_shell_id(curenv->env_id);
+    struct var_list *temp_list = &(local_vars[ENVX(pid)]);
+    struct var *tmp;
+    LIST_FOREACH(tmp, temp_list, var_link) {
+        LIST_REMOVE(tmp, var_link);
+        tmp->v = 0;
+    }
     env_destroy(envs + ENVX(pid));
     return pid;
 }
