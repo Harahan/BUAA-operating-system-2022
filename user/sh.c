@@ -175,10 +175,12 @@ runcmd(char *s) {
                 //user_panic("| not implemented");
             case ';': // use son to execute the cmd before ;
                 if ((pid = fork()) == 0) {
-                    input_fd = -1;
-                    output_fd = -1; // is ok to set input and output both to -1, because only one to
+                    //input_fd = -1;
+                    //output_fd = -1; // is ok to set input and output both to -1, because only one to
                     goto runit;
                 }
+                wait(pid);
+                input_fd = output_fd = -1;
                 argc = hang = rightpipe = 0;
                 break;
             case '&':
