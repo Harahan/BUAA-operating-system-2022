@@ -107,9 +107,16 @@ serve_open(u_int envid, struct Fsreq_open *rq)
 	user_bcopy(rq->req_path, path, MAXPATHLEN);
 	path[MAXPATHLEN - 1] = 0;
 
-	// Find a file id.
-	if ((r = open_alloc(&o)) < 0) {
-		// user_panic("open_alloc failed: %d, invalid path: %s", r, path);
+    // Find a file id.
+    if ((r = open_alloc(&o)) < 0) {
+        user_panic("open_alloc failed: %d, invalid path: %s", r, path);
+        ipc_send(envid, r, 0, 0);
+    }
+
+	fileid = r;
+
+	// Open the file.
+    if ((r = file_open((char *) path, &f)) < 0) {
         if (r == -E_NOT_FOUND && (rq->req_omode & O_CREAT)) {
             if ((r = file_create(path, &f)) < 0) return r;
             f->f_type = FTYPE_REG;
@@ -120,16 +127,7 @@ serve_open(u_int envid, struct Fsreq_open *rq)
             ipc_send(envid, r, 0, 0);
             return;
         }
-	}
-
-	fileid = r;
-
-	// Open the file.
-	if ((r = file_open((char *)path, &f)) < 0) {
-	//	user_panic("file_open failed: %d, invalid path: %s", r, path);
-		ipc_send(envid, r, 0, 0);
-		return ;
-	}
+    }
 
 	// Save the file pointer.
 	o->o_file = f;
