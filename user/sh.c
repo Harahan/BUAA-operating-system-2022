@@ -249,7 +249,7 @@ runcmd(char *s) {
 
 void flush(char *buf) {
     int i;
-    for (i = 0; i < strlen(buf); i++) writef("\b \b");
+    for (i = 0; i <= strlen(buf); i++) writef("\b \b");
 }
 
 void
