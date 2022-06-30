@@ -607,8 +607,9 @@ void sys_env_inherit_var(int sysno, u_int envid) {
     }
 }
 
-u_int sys_env_get_shell(int sysno) {
+u_int sys_env_get_shell(int sysno, int type) {
     u_int pid = get_shell_id(curenv->env_id);
+    if (type) return pid;
     struct var_list *temp_list = &(local_vars[ENVX(pid)]);
     struct var *tmp = LIST_FIRST(temp_list), *pre;
     while(!LIST_EMPTY(temp_list)) {

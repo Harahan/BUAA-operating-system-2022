@@ -233,8 +233,8 @@ runcmd(char *s) {
                 for (i = 0; i < argc; ++i) writef("%s ", argv[i]);
                 char curpath[MAXPATHLEN];
                 curpath_get(curpath);
-                writef("\n" LIGHT_BLUE(%s) " " BOLD_GREEN($) " ", curpath);
-                writef("\b \b"); // ?
+                writef("\n%d:" LIGHT_BLUE(%s) BOLD_GREEN($) " ", syscall_env_get_shell(1), curpath);
+                //writef("\b \b"); // ?
                 exit();
             }
         }
