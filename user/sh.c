@@ -282,8 +282,12 @@ readline(char *buf, u_int n) {
             i = strlen(buf) - 1;
         } else if (i >= 2 && buf[i - 2] == 27 && buf[i - 1] == 91 && buf[i] == 68) { //Left arrow key
             writef("%c%c%c", 27, 91, 67);
+            i -= 2;
+            buf[i] = '\0';
         } else if (i >= 2 && buf[i - 2] == 27 && buf[i - 1] == 91 && buf[i] == 67) { //Right arrow key
             writef("%c%c%c", 27, 91, 68);
+            i -= 2;
+            buf[i] = '\0';
         }
         if (buf[i] == '\t') { // tab --> <
             writef("%c%c%c", 27, 91, 68);
