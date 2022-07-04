@@ -433,13 +433,13 @@ int sys_env_var(int sysno, char *name, char *value, u_int vis, u_int readonly, u
 
 * ``declare``：
 
-  ![image-20220628145649883](C:\Users\hys\AppData\Roaming\Typora\typora-user-images\image-20220628145649883.png)
+  ![image-20220704153445075](C:\Users\hys\AppData\Roaming\Typora\typora-user-images\image-20220704153445075.png)
 
 * ``unset``：
 
-  ![image-20220628145842132](C:\Users\hys\AppData\Roaming\Typora\typora-user-images\image-20220628145842132.png)
+  ![image-20220704153353866](C:\Users\hys\AppData\Roaming\Typora\typora-user-images\image-20220704153353866.png)
 
-  ![image-20220628145944256](C:\Users\hys\AppData\Roaming\Typora\typora-user-images\image-20220628145944256.png)
+  ![image-20220704153123550](C:\Users\hys\AppData\Roaming\Typora\typora-user-images\image-20220704153123550.png)
 
 除第一幅图外其余三幅图为连续的，由于每个``shell``一个链表所以它们之间的变量是无关的，只有在新建时会继承环境变量
 
@@ -534,7 +534,7 @@ int curpath_get_parent(char *path) {
 
 ![image-20220628151508443](C:\Users\hys\AppData\Roaming\Typora\typora-user-images\image-20220628151508443.png)
 
-### ``exist``退出当前``shell``
+### ``exit``退出当前``shell``
 
 由于记录了当前指令所属的``env_is_shell``故该命令直接通过一个系统调用将当前``shell``给``destroy``，注意要清空当前``shell``变量并将节点设为无效：
 
